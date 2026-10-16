@@ -1,0 +1,68 @@
+{
+  "version": "v0.2",
+  "scenario": "chemistry_lab",
+  "risk_types": [
+    "ppe_missing",
+    "reagent_management",
+    "flammable_near_heat",
+    "food_or_drink",
+    "spill_or_obstruction"
+  ],
+  "ablation": {
+    "use_rules": true,
+    "use_memory": true,
+    "use_review_agent": true,
+    "use_agent_tools": true
+  },
+  "agents": {
+    "perception": {
+      "use_llm": true
+    },
+    "analysis": {
+      "use_llm": true
+    },
+    "review": {
+      "use_llm": true
+    }
+  },
+  "review": {
+    "min_confidence": 0.45,
+    "min_evidence_len": 8
+  },
+  "risk_type_notes": {},
+  "prompts": {
+    "perception": "你是高校实验室安全场景感知 Agent。请分析输入图像，场景为 {scenario}。\n\n任务：\n1. 用 2~3 句话客观描述画面中的人、设备、试剂与台面状态，不要下结论。\n2. 提出候选风险，每个候选风险必须有画面中真实可见的证据支撑。\n\n约束：\n- 只允许输出 JSON，不要输出任何解释性文字。\n- risk_type 必须从以下类型中选择：{risk_types}。\n- severity 只能是 low、medium、high、uncertain。\n- evidence 必须具体到可见物体及其位置，禁止写“可能存在”“疑似”这类无信息量的表述。\n- 同一 risk_type 只输出一次，选最严重的那一处。\n- 证据不足时，severity 填 uncertain，并在 uncertainty 中说明为什么判断不了（例如被遮挡、分辨率不足、超出画面）。\n- 不要为了凑数而报警：画面正常时应返回空的 findings 数组。\n\n输出格式：\n{\n  \"scene_description\": \"...\",\n  \"findings\": [\n    {\n      \"risk_type\": \"...\",\n      \"severity\": \"low|medium|high|uncertain\",\n      \"evidence\": \"...\",\n      \"location\": \"...\",\n      \"time_range\": \"unknown\",\n      \"confidence\": 0.0,\n      \"uncertainty\": \"...\"\n    }\n  ]\n}",
+    "analysis": "你是实验室安全风险分析 Agent。请结合给定的安全规则与历史纠错案例，为每个候选风险做出定级判断。\n\n风险等级定义：\n{risk_levels}\n\n要求：\n- 有明确规则支持时，等级应与规则一致；如果画面证据比一般情况更严重或更轻微，可以调整，但必须在 reasoning 中说明理由。\n- recommendation 要具体可执行，写清“先做什么、再做什么”。\n- 历史纠错案例代表人工已确认的判定先例，出现同类情形时应优先向案例结论靠拢。\n- 规则库中没有对应规则时，severity 必须给 uncertain，不能凭常识硬编。\n\n只输出 JSON：\n{\n  \"results\": [\n    {\n      \"index\": 0,\n      \"severity\": \"low|medium|high|uncertain\",\n      \"recommendation\": \"...\",\n      \"confidence\": 0.0,\n      \"uncertainty\": \"...\",\n      \"reasoning\": \"...\"\n    }\n  ]\n}",
+    "review": "你是实验室安全的证据复核 Agent，立场是“质疑者”：你的职责是压低误报，而不是附和前面的结论。\n\n对每一条待复核结论，判断画面证据是否真的支持它：\n- confirmed：证据明确、具体、可指认，且与风险类型直接对应。\n- uncertain：证据被遮挡、模糊、角度受限，或结论依赖推测。\n- rejected：结论与画面明显不符（典型误报，例如把水杯当成未戴护目镜）。\n\n额外要求：\n- 若 evidence 描述模糊（如“可能存在风险”“疑似不规范”），一律记 uncertain。\n- 若 confidence 低于 0.45，除非证据极其明确，否则记 uncertain。\n- 若同一 risk_type 的多个候选互相矛盾，保留证据最强的一条，其余记 rejected。\n\n只输出 JSON：\n{\n  \"results\": [\n    {\n      \"index\": 0,\n      \"verdict\": \"confirmed|uncertain|rejected\",\n      \"severity\": \"low|medium|high|uncertain\",\n      \"reason\": \"...\"\n    }\n  ]\n}",
+    "baseline": "分析这张高校实验室照片，找出其中的安全风险。场景为 {scenario}。risk_type 只能从以下类型中选择：{risk_types}。只输出 JSON，格式：{\"scene_description\": \"...\", \"findings\": [{\"risk_type\": \"...\", \"severity\": \"low|medium|high\", \"evidence\": \"...\", \"location\": \"...\", \"recommendation\": \"...\"}]}"
+  },
+  "change_log": [
+    {
+      "time": "2026-10-15",
+      "from": "none",
+      "to": "v0.1",
+      "proposal": "初版策略：定义 5 类实验室风险，要求输出证据与不确定性。",
+      "changes": [
+        "建立 5 类风险本体",
+        "建立感知提示词"
+      ],
+      "status": "superseded"
+    },
+    {
+      "time": "2026-10-16",
+      "from": "v0.1",
+      "to": "v0.2",
+      "proposal": "工程化重构：三个 Agent 全部接入大模型推理；新增消融开关与误报复核立场；模拟模式结果强制标记为 simulated，不再冒充真实结论。",
+      "changes": [
+        "感知提示词补强：禁止无信息量表述、要求正常画面返回空数组",
+        "新增风险分析提示词：要求必须引用规则与案例依据",
+        "新增证据复核提示词：明确质疑者立场与 rejected 判定",
+        "新增 ablation 开关，支持关闭规则检索 / 案例记忆 / 复核 Agent",
+        "复核阈值由 0.35 提高到 0.45",
+        "新增 baseline 提示词，用于基础对照系统",
+        "新增 use_agent_tools 消融开关"
+      ],
+      "status": "active"
+    }
+  ]
+}

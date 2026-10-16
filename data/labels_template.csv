@@ -1,0 +1,3 @@
+﻿sample_id,file_path,split,risk_type,severity,evidence,location,notes
+lab_0001,data/dev/lab_0001.jpg,dev,normal,normal,未见明确风险,无,示例
+lab_0002,data/dev/lab_0002.jpg,dev,ppe_missing,medium,人员操作烧杯但未见护目镜,画面中央,示例

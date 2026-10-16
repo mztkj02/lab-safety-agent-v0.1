@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>实验室危险场景识别与自进化 Agent</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+    --red: #dc2626;
+    --red-soft: #fee2e2;
+    --amber: #b45309;
+    --amber-soft: #fef3c7;
+    --green: #15803d;
+    --green-soft: #dcfce7;
+    --purple: #6d28d9;
+    --purple-soft: #ede9fe;
+    --gray-soft: #f1f5f9;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  header {
+    padding: 22px 32px 18px; background: linear-gradient(135deg, #eef4ff, #ffffff);
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 { margin: 0 0 6px; font-size: 22px; letter-spacing: -0.2px; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  .statusbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    background: var(--gray-soft); color: #334155; border: 1px solid var(--line);
+  }
+  .pill.live { background: var(--green-soft); color: var(--green); border-color: #bbf7d0; }
+  .pill.mock { background: var(--amber-soft); color: var(--amber); border-color: #fde68a; }
+  .pill.offline { background: var(--purple-soft); color: var(--purple); border-color: #ddd6fe; }
+  main { display: grid; grid-template-columns: 360px 1fr; gap: 18px; padding: 18px 32px 40px; align-items: start; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; box-shadow: 0 6px 20px rgba(15, 23, 42, .045);
+  }
+  .card + .card { margin-top: 16px; }
+  .card h2 { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
+  .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; }
+  .dropzone {
+    border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px 16px; text-align: center;
+    color: var(--muted); background: #f8fafc; cursor: pointer; transition: .15s;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+  .dropzone strong { display: block; color: var(--text); margin-bottom: 6px; font-size: 14px; }
+  .dropzone.drag strong { color: var(--blue); }
+  #preview { margin-top: 12px; display: none; }
+  #preview img, #preview video { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; }
+  .field { margin-top: 12px; }
+  .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 5px; font-weight: 600; }
+  select, input[type=text], textarea {
+    width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px;
+    font: inherit; background: #fff; color: var(--text);
+  }
+  textarea { min-height: 92px; resize: vertical; }
+  .switch { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; }
+  .switch input { width: 15px; height: 15px; accent-color: var(--blue); }
+  .switch small { color: var(--muted); }
+  button {
+    border: 0; border-radius: 9px; padding: 9px 14px; cursor: pointer;
+    font-weight: 600; font-size: 13.5px; font-family: inherit; transition: .15s;
+  }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .primary { background: var(--blue); color: #fff; width: 100%; margin-top: 14px; padding: 11px; }
+  .primary:hover:not(:disabled) { background: #1d4ed8; }
+  .secondary { background: var(--blue-soft); color: #1e40af; }
+  .secondary:hover:not(:disabled) { background: #dbeafe; }
+  .ghost { background: var(--gray-soft); color: #334155; border: 1px solid var(--line); }
+  .ghost:hover:not(:disabled) { background: #e2e8f0; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .metric { padding: 11px; border-radius: 11px; background: #f8fafc; border: 1px solid var(--line); text-align: center; }
+  .metric b { display: block; font-size: 20px; line-height: 1.2; }
+  .metric span { color: var(--muted); font-size: 11.5px; }
+  .banner {
+    padding: 11px 14px; border-radius: 11px; font-size: 13px; margin-bottom: 14px;
+    display: flex; gap: 9px; align-items: flex-start;
+  }
+  .banner.warn { background: var(--amber-soft); border: 1px solid #fde68a; color: #78350f; }
+  .banner.info { background: var(--blue-soft); border: 1px solid #bfdbfe; color: #1e3a8a; }
+  .banner.err { background: var(--red-soft); border: 1px solid #fecaca; color: #7f1d1d; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { background: var(--gray-soft); color: #334155; border: 1px solid var(--line); padding: 7px 13px; }
+  .tab.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .badge {
+    display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px;
+    font-size: 11.5px; font-weight: 700; white-space: nowrap;
+  }
+  .high { background: var(--red-soft); color: var(--red); }
+  .medium { background: var(--amber-soft); color: var(--amber); }
+  .low { background: var(--green-soft); color: var(--green); }
+  .uncertain { background: var(--purple-soft); color: var(--purple); }
+  .simulated { background: var(--gray-soft); color: #475569; border: 1px dashed #cbd5e1; }
+  .rejected { background: var(--gray-soft); color: #64748b; text-decoration: line-through; }
+  .risk { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-top: 11px; background: #fff; }
+  .risk h3 { margin: 0 0 9px; font-size: 14.5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .risk dl { margin: 0; display: grid; grid-template-columns: 78px 1fr; gap: 4px 10px; font-size: 13px; }
+  .risk dt { color: var(--muted); }
+  .risk dd { margin: 0; }
+  .trace { display: flex; gap: 11px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+  .trace:last-child { border-bottom: 0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--blue); margin-top: 7px; flex: none; }
+  .trace b { display: block; font-size: 13.5px; }
+  .trace span { color: var(--muted); font-size: 12.5px; }
+  .trace .conflict { color: var(--amber); font-size: 12.5px; }
+  pre {
+    white-space: pre-wrap; word-break: break-word; background: #0f172a; color: #e2e8f0;
+    padding: 14px; border-radius: 11px; font-size: 12.5px; max-height: 460px; overflow: auto;
+    font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+  .empty { color: var(--muted); font-size: 13px; padding: 10px 0; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .kv { display: grid; grid-template-columns: 110px 1fr; gap: 5px 10px; font-size: 13px; margin: 10px 0; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; }
+  ol.changes { margin: 8px 0 0; padding-left: 20px; font-size: 13px; }
+  ol.changes li { margin-bottom: 4px; }
+  .ver { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px;
+         border: 1px solid var(--line); border-radius: 9px; margin-top: 8px; font-size: 13px; }
+  .ver.cur { border-color: var(--blue); background: var(--blue-soft); }
+  .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid #fff;
+          border-top-color: transparent; border-radius: 50%; animation: r .7s linear infinite; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  footer { padding: 0 32px 28px; color: var(--muted); font-size: 12.5px; }
+  @media (max-width: 1000px) {
+    main { grid-template-columns: 1fr; padding: 14px; }
+    header, footer { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>实验室危险场景识别与自进化 Agent</h1>
+  <p>三 Agent 协作 → 工具调用 → 证据复核 → 人工纠错 → 策略自进化，形成完整闭环。</p>
+  <div class="statusbar">
+    <span class="pill" id="modePill">检查运行环境…</span>
+    <span class="pill" id="versionPill">策略版本 —</span>
+    <span class="pill" id="casePill">纠错案例 0</span>
+  </div>
+</header>
+
+<main>
+  <div>
+    <section class="card">
+      <h2>1. 输入</h2>
+      <div class="dropzone" id="dropzone">
+        <strong>点击选择，或把图片 / 视频拖到这里</strong>
+        <span id="dzHint">支持 jpg / png / webp / mp4 / mov / avi</span>
+      </div>
+      <input type="file" id="fileInput" accept="image/*,video/*" style="display:none" />
+      <div id="preview"></div>
+
+      <div class="field">
+        <label>场景</label>
+        <select id="scenario">
+          <option value="chemistry_lab">高校化学 / 材料实验室（推荐）</option>
+          <option value="materials_lab">材料制备与表征实验室</option>
+          <option value="biology_lab">生物实验室</option>
+          <option value="machine_shop">金工实习车间</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>消融实验开关（用于对比评测）</label>
+        <label class="switch"><input type="checkbox" id="noRules" /> 关闭规则检索 <small>预期：漏报上升</small></label>
+        <label class="switch"><input type="checkbox" id="noMemory" /> 关闭案例记忆 <small>预期：同类错误重复出现</small></label>
+        <label class="switch"><input type="checkbox" id="noReview" /> 关闭证据复核 Agent <small>预期：误报显著上升</small></label>
+      </div>
+
+      <button class="primary" id="runBtn">运行分析</button>
+
+      <div class="metrics">
+        <div class="metric"><b id="mRisk">0</b><span>风险条目</span></div>
+        <div class="metric"><b id="mCalls">0</b><span>模型调用</span></div>
+        <div class="metric"><b id="mMs">—</b><span>耗时 (ms)</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>运行环境</h2>
+      <div class="kv" id="envKv">
+        <dt>模式</dt><dd>—</dd>
+        <dt>接口地址</dt><dd>—</dd>
+        <dt>模型</dt><dd>—</dd>
+      </div>
+      <p class="hint" id="envTip">若显示“模拟模式”，说明未配置 API Key，结果仅供演示流程。</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="tabs">
+      <button class="tab active" data-panel="result">识别结果</button>
+      <button class="tab" data-panel="trace">Agent 过程</button>
+      <button class="tab" data-panel="feedback">人工纠错与自进化</button>
+      <button class="tab" data-panel="versions">策略版本</button>
+      <button class="tab" data-panel="report">报告导出</button>
+    </div>
+
+    <div class="panel active" id="panel-result">
+      <div id="resultBanner"></div>
+      <div id="risks"><p class="empty">点击左侧「运行分析」开始。</p></div>
+    </div>
+
+    <div class="panel" id="panel-trace">
+      <p class="hint">这里展示每个 Agent 的输入摘要、输出摘要、工具调用与冲突/降级记录 —— 报告中“Agent 协作机制”章节可直接引用。</p>
+      <div id="traces"><p class="empty">暂无执行记录。</p></div>
+    </div>
+
+    <div class="panel" id="panel-feedback">
+      <p class="hint">把系统判错的条目改对，系统会把它沉淀成案例记忆，并据此生成一份<b>有实质差异</b>的新策略草案。</p>
+      <div class="field">
+        <label>要纠正的风险类型</label>
+        <select id="fbOriginal"></select>
+      </div>
+      <div class="row">
+        <div style="flex:1; min-width:180px;">
+          <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600;">正确的风险类型</label>
+          <select id="fbCorrect">
+            <option value="normal">normal（实际正常，属误报）</option>
+            <option value="ppe_missing">ppe_missing</option>
+            <option value="reagent_management">reagent_management</option>
+            <option value="flammable_near_heat">flammable_near_heat</option>
+            <option value="food_or_drink">food_or_drink</option>
+            <option value="spill_or_obstruction">spill_or_obstruction</option>
+          </select>
+        </div>
+        <div style="flex:1; min-width:140px;">
+          <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600;">正确等级</label>
+          <select id="fbSeverity">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+            <option value="uncertain">uncertain</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>纠错说明（必填，将作为进化依据写入策略 change_log）</label>
+        <textarea id="fbNote">画面中是水杯放置在实验台边缘，不是未佩戴护目镜。请把这类样本记为 food_or_drink，并避免把透明容器误判为 PPE 缺失。</textarea>
+      </div>
+      <button class="secondary" id="fbBtn">提交纠错并生成策略草案</button>
+      <div id="fbResult"></div>
+    </div>
+
+    <div class="panel" id="panel-versions">
+      <p class="hint">策略版本可晋升、可回退。评测变差时回退到旧版本，是自进化闭环的一部分。</p>
+      <div id="versions"></div>
+    </div>
+
+    <div class="panel" id="panel-report">
+      <div class="row" style="margin:0 0 12px;">
+        <button class="ghost" id="dlMd">下载 Markdown 报告</button>
+        <button class="ghost" id="dlJson">下载 JSON 结果</button>
+      </div>
+      <pre id="reportText">暂无报告。</pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  免责声明：本系统用于教学与辅助分析，识别结果必须人工复核；“未识别到风险”不等于“场景安全”。
+  模拟模式输出不构成任何真实识别结论。
+</footer>
+
+<script>
+const state = { file: null, report: null, live: false, versions: [] };
+
+const $ = (id) => document.getElementById(id);
+const RISK_LABELS = {
+  ppe_missing: 'PPE 缺失',
+  reagent_management: '试剂管理异常',
+  flammable_near_heat: '热源附近易燃物',
+  food_or_drink: '实验区饮食',
+  spill_or_obstruction: '洒漏或通道阻塞',
+  normal: '正常',
+  unknown: '未知类型'
+};
+const STATUS_LABELS = {
+  confirmed: '复核确认', uncertain: '证据不足', rejected: '复核驳回',
+  simulated: '模拟结果', analyzed: '已分析', candidate: '候选'
+};
+const SEV_LABELS = { high: '高风险', medium: '中风险', low: '低风险', uncertain: '不确定' };
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------------- 启动 ---------------- */
+async function boot() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) throw new Error('bad status');
+    const data = await res.json();
+    state.live = true;
+    renderEnv(data.backend, true);
+    setPill('versionPill', '策略版本 ' + (data.strategy || '—'));
+    setPill('casePill', '纠错案例 ' + (data.cases?.total_cases ?? 0));
+    state.versions = data.versions || [];
+    renderVersions();
+  } catch (e) {
+    state.live = false;
+    renderEnv({ mode: 'offline', base_url: '—', model: '—' }, false);
+  }
+  bindEvents();
+}
+
+function renderEnv(backend, live) {
+  const pill = $('modePill');
+  if (!live) {
+    pill.className = 'pill offline';
+    pill.textContent = '离线演示模式';
+    $('envKv').innerHTML = '<dt>模式</dt><dd>离线演示（未连接后端）</dd><dt>说明</dt><dd>运行 <code>python src/main.py serve</code> 后刷新，即可使用真实分析</dd>';
+    $('envTip').textContent = '当前为离线演示：点击「运行分析」只会展示内置示例流程。';
+    return;
+  }
+  if (backend.mode === 'api') {
+    pill.className = 'pill live';
+    pill.textContent = '真实模型 API';
+    $('envTip').textContent = '已接入真实多模态模型，分析结果可用于实验记录。';
+  } else {
+    pill.className = 'pill mock';
+    pill.textContent = '模拟模式（无 API Key）';
+    $('envTip').textContent = '未检测到 SAFETY_LLM_API_KEY，结果仅为流程演示，不可作为识别结论。';
+  }
+  $('envKv').innerHTML =
+    `<dt>模式</dt><dd>${esc(backend.mode === 'api' ? '真实模型 API' : '模拟模式')}</dd>` +
+    `<dt>接口地址</dt><dd>${esc(backend.base_url)}</dd>` +
+    `<dt>模型</dt><dd>${esc(backend.model)}</dd>`;
+}
+
+const setPill = (id, text) => { $(id).textContent = text; };
+
+/* ---------------- 事件绑定 ---------------- */
+function bindEvents() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      $('panel-' + tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  const dz = $('dropzone');
+  const input = $('fileInput');
+  dz.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => setFile(input.files[0]));
+  ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+  dz.addEventListener('drop', e => { if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]); });
+
+  $('runBtn').addEventListener('click', runAnalysis);
+  $('fbBtn').addEventListener('click', submitFeedback);
+  $('dlMd').addEventListener('click', () => download('md'));
+  $('dlJson').addEventListener('click', () => download('json'));
+}
+
+function setFile(file) {
+  if (!file) return;
+  state.file = file;
+  $('dzHint').textContent = file.name + '  (' + (file.size / 1024).toFixed(0) + ' KB)';
+  const url = URL.createObjectURL(file);
+  const box = $('preview');
+  box.style.display = 'block';
+  box.innerHTML = file.type.startsWith('video')
+    ? `<video src="${url}" controls></video>`
+    : `<img src="${url}" alt="预览" />`;
+}
+
+/* ---------------- 运行分析 ---------------- */
+async function runAnalysis() {
+  if (!state.live) { runOfflineDemo(); return; }
+  if (!state.file) { alert('请先选择一张图片或一段视频'); return; }
+
+  const btn = $('runBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> 分析中…';
+
+  const fd = new FormData();
+  fd.append('file', state.file);
+  fd.append('scenario', $('scenario').value);
+  fd.append('no_rules', $('noRules').checked);
+  fd.append('no_memory', $('noMemory').checked);
+  fd.append('no_review', $('noReview').checked);
+
+  try {
+    const res = await fetch('/api/analyze', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || '分析失败');
+    state.report = data;
+    renderReport(data);
+    refreshVersions();
+  } catch (err) {
+    $('resultBanner').innerHTML = `<div class="banner err">分析失败：${esc(err.message)}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '运行分析';
+  }
+}
+
+/* ---------------- 渲染结果 ---------------- */
+function renderReport(data) {
+  const summary = data.summary || {};
+  $('mRisk').textContent = summary.total ?? (data.findings || []).length;
+  $('mCalls').textContent = data.model_calls ?? '—';
+  $('mMs').textContent = data.duration_ms ?? '—';
+
+  const banner = $('resultBanner');
+  const conflictNote = summary.conflict_count
+    ? `<div class="banner warn"><b>Agent 意见分歧 ${summary.conflict_count} 处</b>：风险分析 Agent 与证据复核 Agent 结论不一致，
+        已按保守原则仲裁并记录，详见下方「Agent 意见冲突与仲裁」。</div>` : '';
+  if (data.mode === 'mock') {
+    banner.innerHTML = `<div class="banner warn"><b>模拟模式</b>：当前未接入真实视觉模型，
+      以下条目仅用于演示系统流程，<b>不能作为识别结论</b>，报告中也已据此标记。</div>` + conflictNote;
+  } else {
+    banner.innerHTML = `<div class="banner info">真实模型结果：策略版本 <b>${esc(data.strategy_version)}</b>，
+      处理 ${data.frame_count || 1} 帧，模型调用 ${data.model_calls ?? '—'} 次，耗时 ${data.duration_ms ?? '—'} ms。仍须人工复核。</div>`
+      + conflictNote;
+  }
+
+  const findings = data.findings || [];
+  const conflicts = data.conflicts || [];
+  let html = findings.length ? findings.map(renderRisk).join('')
+    : '<p class="empty">未识别到明确风险。注意：这不等于场景安全。</p>';
+  if (conflicts.length) {
+    html += `<div class="risk" style="border-color:#fde68a;background:#fffbeb;">
+      <h3>Agent 意见冲突与仲裁</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        <tr style="color:var(--muted);text-align:left;">
+          <th style="padding:4px 6px;">风险类型</th><th style="padding:4px 6px;">分析 Agent</th>
+          <th style="padding:4px 6px;">复核 Agent</th><th style="padding:4px 6px;">仲裁结论</th></tr>
+        ${conflicts.map(c => `<tr>
+          <td style="padding:4px 6px;">${esc(RISK_LABELS[c.risk_type] || c.risk_type)}</td>
+          <td style="padding:4px 6px;">${esc(SEV_LABELS[c.analysis_view] || c.analysis_view || '—')}</td>
+          <td style="padding:4px 6px;">${esc(c.review_verdict)}</td>
+          <td style="padding:4px 6px;">${esc(c.resolution)}</td></tr>`).join('')}
+      </table>
+      <dl style="margin-top:8px;">${conflicts.map(c =>
+        `<dt>${esc(RISK_LABELS[c.risk_type] || c.risk_type)}</dt><dd>${esc(c.disagreement)}</dd>`).join('')}</dl>
+    </div>`;
+  }
+  $('risks').innerHTML = html;
+
+  $('traces').innerHTML = (data.traces || []).length
+    ? data.traces.map(t => `
+      <div class="trace"><div class="dot"></div><div>
+        <b>${esc(t.agent)}${t.duration_ms ? ` · ${t.duration_ms} ms` : ''}</b>
+        <span>输入：${esc(t.input_summary)}</span><br/>
+        <span>输出：${esc(t.output_summary)}</span>
+        ${(t.tool_calls || []).filter(c => c.tool && c.enabled === undefined).map(c =>
+          `<div class="conflict">↳ 工具调用 ${esc(c.tool)}：${c.ok ? '成功' : '失败'}${c.summary ? '（' + esc(c.summary) + '）' : ''}</div>`).join('')}
+        ${(t.conflicts || []).map(c => `<div class="conflict">↳ ${esc(c)}</div>`).join('')}
+      </div></div>`).join('')
+    : '<p class="empty">暂无执行记录。</p>';
+
+  $('fbOriginal').innerHTML = findings.map(f =>
+    `<option value="${esc(f.risk_type)}">${esc(RISK_LABELS[f.risk_type] || f.risk_type)}（${SEV_LABELS[f.severity] || f.severity}）</option>`
+  ).join('') || '<option value="">无风险条目可纠正</option>';
+
+  $('reportText').textContent = buildMarkdown(data);
+}
+
+function renderRisk(f, i) {
+  const sev = f.severity || 'uncertain';
+  const st = f.status || 'candidate';
+  const sevCls = ['high', 'medium', 'low'].includes(sev) ? sev : 'uncertain';
+  const stCls = ['confirmed', 'uncertain', 'rejected', 'simulated'].includes(st) ? st : 'uncertain';
+  return `<div class="risk">
+    <h3>${i + 1}. ${esc(RISK_LABELS[f.risk_type] || f.risk_type)}
+      <span class="badge ${sevCls}">${esc(SEV_LABELS[sev] || sev)}</span>
+      <span class="badge ${stCls}">${esc(STATUS_LABELS[st] || st)}</span>
+      ${f.needs_human_review ? '<span class="badge high">⚠ 需人工优先复核</span>' : ''}</h3>
+    <dl>
+      <dt>置信度</dt><dd>${(f.confidence ?? 0).toFixed(2)}</dd>
+      <dt>位置</dt><dd>${esc(f.location)}${f.time_range && f.time_range !== 'unknown' ? ' · ' + esc(f.time_range) : ''}</dd>
+      ${f.temporal_note ? `<dt>时间维度</dt><dd>${esc(f.temporal_note)}</dd>` : ''}
+      <dt>证据</dt><dd>${esc(f.evidence)}</dd>
+      <dt>建议</dt><dd>${esc(f.recommendation)}</dd>
+      <dt>不确定性</dt><dd>${esc(f.uncertainty || '无')}</dd>
+      ${f.disagreement ? `<dt>Agent 分歧</dt><dd>${esc(f.disagreement)}</dd>` : ''}
+      <dt>依据</dt><dd>规则 ${esc((f.rule_ids || []).join('、') || '无')}；案例 ${esc((f.case_ids || []).join('、') || '无')}</dd>
+    </dl>
+  </div>`;
+}
+
+function buildMarkdown(data) {
+  const lines = [`# 安全分析报告：${data.sample_id}`, '',
+    `- 场景：${data.scenario}`, `- 模式：${data.mode}`, `- 系统形态：${data.analysis_mode}`,
+    `- 策略版本：${data.strategy_version}`, `- 生成时间：${data.generated_at}`,
+    `- 模型调用：${data.model_calls} 次｜工具调用：${data.tool_calls} 次`, '', '## 风险明细'];
+  (data.findings || []).forEach((f, i) => {
+    lines.push('', `### ${i + 1}. ${f.risk_type}`,
+      `- 等级：${f.severity}`, `- 状态：${f.status}`,
+      `- 置信度：${f.confidence}`, `- 位置：${f.location} / ${f.time_range}`,
+      `- 时间维度：${f.temporal_note || '不适用'}`,
+      `- 证据：${f.evidence}`, `- 建议：${f.recommendation}`,
+      `- 不确定性：${f.uncertainty || '无'}`);
+    if (f.disagreement) lines.push(`- Agent 分歧：${f.disagreement}`);
+  });
+  if ((data.conflicts || []).length) {
+    lines.push('', '## Agent 意见冲突与仲裁', '',
+      '| 风险类型 | 风险分析 Agent | 证据复核 Agent | 仲裁结论 |', '| --- | --- | --- | --- |',
+      ...data.conflicts.map(c => `| ${c.risk_type} | ${c.analysis_view} | ${c.review_verdict} | ${c.resolution} |`));
+  }
+  lines.push('', '## 免责声明', data.disclaimer || '');
+  return lines.join('\n');
+}
+
+/* ---------------- 人工纠错 ---------------- */
+async function submitFeedback() {
+  if (!state.live) {
+    $('fbResult').innerHTML = '<div class="banner info">离线模式下不写文件。启动后端后再试。</div>';
+    return;
+  }
+  if (!state.report) { $('fbResult').innerHTML = '<div class="banner err">请先运行一次分析。</div>'; return; }
+
+  const btn = $('fbBtn');
+  btn.disabled = true; btn.textContent = '生成中…';
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sample_id: state.report.sample_id,
+        original_risk_type: $('fbOriginal').value,
+        correct_risk_type: $('fbCorrect').value,
+        correct_severity: $('fbSeverity').value,
+        note: $('fbNote').value
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || '提交失败');
+    $('fbResult').innerHTML = `
+      <div class="risk" style="margin-top:14px; border-color:#bfdbfe; background:var(--blue-soft);">
+        <h3>已生成策略草案 <span class="badge low">${esc(data.version)}</span></h3>
+        <dl>
+          <dt>纠错案例</dt><dd>已写入 ${esc(data.memory_path)}</dd>
+          <dt>案例总数</dt><dd>${data.cases?.total_cases ?? '—'} 条（误报 ${data.cases?.false_positive_count ?? 0} 条）</dd>
+          <dt>草案文件</dt><dd>${esc(data.draft)}</dd>
+        </dl>
+        <p style="margin:8px 0 0;font-size:13px;"><b>本次进化内容：</b></p>
+        <ol class="changes">${(data.changes || []).map(c => `<li>${esc(c)}</li>`).join('')}</ol>
+        <div class="row"><button class="secondary" id="promoteInline">确认并晋升为 v${esc((data.version || '').replace('v',''))}</button></div>
+      </div>`;
+    refreshVersions();
+    const inline = $('promoteInline');
+    if (inline) inline.addEventListener('click', () => promote(data.version));
+  } catch (err) {
+    $('fbResult').innerHTML = `<div class="banner err">${esc(err.message)}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '提交纠错并生成策略草案';
+  }
+}
+
+/* ---------------- 版本 ---------------- */
+async function refreshVersions() {
+  if (!state.live) { renderVersions(); return; }
+  try {
+    const res = await fetch('/api/versions');
+    const data = await res.json();
+    state.versions = data.versions || [];
+    state.currentVersion = data.current;
+    setPill('versionPill', '策略版本 ' + (data.current || '—'));
+    renderVersions();
+  } catch (e) { /* ignore */ }
+}
+
+function renderVersions() {
+  const box = $('versions');
+  if (!state.versions.length) { box.innerHTML = '<p class="empty">暂无版本记录。</p>'; return; }
+  box.innerHTML = state.versions.map(v => {
+    const cur = v === state.currentVersion;
+    return `<div class="ver ${cur ? 'cur' : ''}">
+      <span>${esc(v)} ${cur ? '<span class="badge low">当前生效</span>' : '<span class="badge simulated">草案/历史</span>'}</span>
+      ${cur ? '' : `<button class="ghost" data-promote="${esc(v)}">切换到此版本</button>`}
+    </div>`;
+  }).join('');
+  box.querySelectorAll('[data-promote]').forEach(b =>
+    b.addEventListener('click', () => promote(b.dataset.promote)));
+}
+
+async function promote(version) {
+  if (!state.live) return;
+  try {
+    const res = await fetch('/api/promote', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ version })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || '切换失败');
+    await refreshVersions();
+    alert(`已切换到策略 ${version}，下次分析将使用该版本。`);
+  } catch (err) { alert(err.message); }
+}
+
+/* ---------------- 报告下载 ---------------- */
+function download(kind) {
+  if (!state.report) { alert('请先运行一次分析'); return; }
+  let content, name, type;
+  if (kind === 'md') {
+    content = buildMarkdown(state.report);
+    name = `${state.report.sample_id}_report.md`;
+    type = 'text/markdown;charset=utf-8';
+  } else {
+    content = JSON.stringify(state.report, null, 2);
+    name = `${state.report.sample_id}_report.json`;
+    type = 'application/json;charset=utf-8';
+  }
+  const url = URL.createObjectURL(new Blob([content], { type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------- 离线演示 ---------------- */
+function runOfflineDemo() {
+  const demo = {
+    sample_id: 'offline_demo',
+    scenario: $('scenario').value,
+    mode: 'mock',
+    analysis_mode: 'multi_agent',
+    strategy_version: 'offline',
+    frame_count: 4,
+    duration_ms: 1180,
+    model_calls: 9,
+    tool_calls: 7,
+    generated_at: new Date().toLocaleString('zh-CN'),
+    disclaimer: '离线演示数据，非真实识别结果。',
+    summary: { total: 2, high_risk: 0, needs_human_review: 1, conflict_count: 1 },
+    findings: [
+      { risk_type: 'food_or_drink', severity: 'low', status: 'simulated', confidence: 0.76,
+        location: '实验台右侧边缘', time_range: 'unknown',
+        evidence: '可见透明水杯靠近实验记录本和试剂架。',
+        recommendation: '将水杯移出实验区，清洁台面后再继续实验。',
+        uncertainty: '', rule_ids: ['R-FOOD-01'], case_ids: [], temporal_note: '' },
+      { risk_type: 'flammable_near_heat', severity: 'uncertain', status: 'simulated', confidence: 0.35,
+        location: '加热板附近', time_range: 'unknown',
+        evidence: '加热板旁有一叠滤纸，但无法确认加热板是否处于工作状态。',
+        recommendation: '确认热源状态，把可燃物移出热源周边至少 0.5 m。',
+        uncertainty: '复核认为证据不足：热源是否在工作中无法确认。',
+        rule_ids: ['R-FIRE-01'], case_ids: ['case_demo_01'],
+        temporal_note: '第 1~2 帧（持续 2/4 帧，占 50%）',
+        needs_human_review: true,
+        disagreement: '风险分析 Agent 定为 high，证据复核 Agent 认为证据不足',
+        analysis_severity: 'high', review_verdict: 'uncertain' }
+    ],
+    conflicts: [{
+      risk_type: 'flammable_near_heat', analysis_view: 'high', review_verdict: 'uncertain',
+      disagreement: '风险分析 Agent 定为 high，证据复核 Agent 认为证据不足',
+      resolution: '按保守原则降级为不确定，并列入人工优先复核', needs_human_review: true
+    }],
+    traces: [
+      { agent: '场景感知 Agent', input_summary: '示例视频；场景 chemistry_lab', output_summary: '场景描述完成，提出候选风险 2 个，自主工具调用 3 次',
+        tool_calls: [{ tool: 'search_rules', ok: true, summary: '命中 2 条规则' }, { tool: 'crop_region', ok: true, summary: '裁剪 key_region 区域并放大' }],
+        conflicts: [], duration_ms: 520 },
+      { agent: '风险分析 Agent', input_summary: '候选风险 2 个；规则检索=开；案例记忆=开', output_summary: '完成定级 2 个',
+        tool_calls: [], conflicts: [], duration_ms: 340 },
+      { agent: '证据复核 Agent', input_summary: '待复核风险 2 个', output_summary: '确认 0 个，不确定 1 个，驳回误报 0 个，模拟标记 2 个，与风险分析 Agent 存在 1 处分歧',
+        tool_calls: [], conflicts: ['[冲突] flammable_near_heat：风险分析 Agent 定为 high，证据复核 Agent 认为证据不足 → 仲裁：按保守原则降级为不确定，并列入人工优先复核'], duration_ms: 320 }
+    ]
+  };
+  state.report = demo;
+  state.currentVersion = 'offline';
+  state.versions = ['v0.1', 'v0.2'];
+  renderReport(demo);
+  renderVersions();
+}
+
+boot();
+</script>
+</body>
+</html>

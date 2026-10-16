@@ -1,0 +1,26 @@
+{
+  "version": "v0.1",
+  "scenario": "chemistry_lab",
+  "risk_types": [
+    "ppe_missing",
+    "reagent_management",
+    "flammable_near_heat",
+    "food_or_drink",
+    "spill_or_obstruction"
+  ],
+  "review": {
+    "min_confidence": 0.35
+  },
+  "prompts": {
+    "perception": "你是高校实验室安全场景感知 Agent。请分析输入图像，场景为 {scenario}。只允许输出 JSON。字段包括 scene_description 和 findings。findings 中每项包含 risk_type、severity、evidence、location、time_range、confidence、uncertainty。risk_type 必须从以下类型中选择：{risk_types}。如果证据不足，请明确写 uncertainty，不要编造。severity 只能是 low、medium、high、uncertain。"
+  },
+  "change_log": [
+    {
+      "time": "2026-10-15",
+      "from": "none",
+      "to": "v0.1",
+      "proposal": "初版策略：定义 5 类实验室风险，要求输出证据与不确定性。",
+      "status": "active"
+    }
+  ]
+}

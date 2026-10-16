@@ -1,0 +1,45 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- 密钥：绝对不要提交 ----
+.env
+.env.*
+*.key
+secrets.json
+
+# ---- 运行产物（每次跑都会重新生成）----
+reports/sessions/
+reports/uploads/
+reports/frames/
+reports/smoke/
+reports/video_test/
+reports/tools/
+reports/tool_calls.jsonl
+reports/*_report.json
+reports/*_report.md
+
+# ---- 占位演示数据（由脚本生成，不是真实实验数据）----
+data/demo/
+data/demo_video/
+data/demo_labels_*.csv
+
+# ---- 实验输出 ----
+# 默认忽略（往往是占位数据跑出来的）。
+# 用真实数据跑出结果后，请显式加入：git add -f reports/experiments
+reports/experiments/
+
+# ---- 例外：保留仓库自带的示例报告 ----
+!reports/ppe_example_report.json
+!reports/ppe_example_report.md

@@ -1,0 +1,44 @@
+{
+  "sample_id": "ppe_example",
+  "input_path": "data\\dev\\ppe_example.jpg",
+  "scenario": "chemistry_lab",
+  "mode": "mock",
+  "strategy_version": "v0.1",
+  "findings": [
+    {
+      "risk_type": "ppe_missing",
+      "severity": "medium",
+      "evidence": "mock 模式根据文件名提示检测到可能存在 PPE 缺失",
+      "location": "画面中央",
+      "time_range": "unknown",
+      "confidence": 0.42,
+      "recommendation": "立即停止相关操作，确认人员正确穿戴实验服、护目镜和手套后再继续。",
+      "uncertainty": "当前未接入真实视觉模型，不能作为实际识别证据",
+      "status": "confirmed"
+    }
+  ],
+  "traces": [
+    {
+      "agent": "场景感知 Agent",
+      "input_summary": "输入图片: ppe_example.jpg; 场景: chemistry_lab",
+      "output_summary": "候选风险 1 个",
+      "tool_calls": [],
+      "conflicts": []
+    },
+    {
+      "agent": "风险分析 Agent",
+      "input_summary": "候选风险 1 个",
+      "output_summary": "形成分析结果 1 个",
+      "tool_calls": [],
+      "conflicts": []
+    },
+    {
+      "agent": "证据复核 Agent",
+      "input_summary": "待复核风险 1 个",
+      "output_summary": "确认 1 个，不确定 0 个",
+      "tool_calls": [],
+      "conflicts": []
+    }
+  ],
+  "disclaimer": "本结果用于教学与辅助分析，需人工复核；未识别到风险不等于场景安全。"
+}
