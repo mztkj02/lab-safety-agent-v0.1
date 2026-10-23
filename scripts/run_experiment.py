@@ -20,6 +20,7 @@ import csv
 import json
 import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Dict, List, Set
 
@@ -46,8 +47,21 @@ def read_samples(labels_path: Path) -> List[Dict[str, str]]:
     return rows
 
 
-def run_group(name: str, samples: List[Dict[str, str]], out_dir: Path, mock: bool, analysis_mode: str) -> None:
-    if out_dir.exists():
+def run_group(
+    name: str,
+    samples: List[Dict[str, str]],
+    out_dir: Path,
+    mock: bool,
+    analysis_mode: str,
+    sleep: float = 0.0,
+    resume: bool = False,
+) -> Dict[str, int]:
+    """跑一组样本。
+
+    `resume=True` 时不清空目录、跳过已有报告的样本——真实模型跑 80 张要几十分钟，
+    中途断线（429、断网、手滑 Ctrl+C）后不该从头再来。
+    """
+    if out_dir.exists() and not resume:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -55,25 +69,58 @@ def run_group(name: str, samples: List[Dict[str, str]], out_dir: Path, mock: boo
         PROJECT_ROOT, CURRENT_STRATEGY, force_mock=mock, analysis_mode=analysis_mode
     )
     print(f"\n--- 运行实验组：{name}（{len(samples)} 个样本，模式 {analysis_mode}）---")
+
+    done = skipped = 0
+    failures: List[str] = []
+    started = time.time()
+
     for idx, row in enumerate(samples, 1):
+        sample_id = row.get("sample_id") or Path(row["file_path"]).stem
+        report_path = out_dir / f"{sample_id}_report.json"
+
+        if resume and report_path.exists():
+            done += 1
+            skipped += 1
+            continue
+
         input_path = PROJECT_ROOT / row["file_path"]
         if not input_path.exists():
             print(f"  [{idx}/{len(samples)}] 跳过（文件不存在）：{row['file_path']}")
+            failures.append(row["file_path"])
             continue
+
         try:
             pipeline.analyze(input_path, row.get("scene") or "chemistry_lab", out_dir)
+        except KeyboardInterrupt:
+            print(f"\n  已中断。已完成的 {done} 个样本可直接用 `--resume` 续跑。")
+            raise
         except Exception as err:  # noqa: BLE001
             print(f"  [{idx}/{len(samples)}] 失败 {input_path.name}：{err}")
+            failures.append(input_path.name)
         else:
-            print(f"  [{idx}/{len(samples)}] {input_path.name}")
+            done += 1
+            elapsed = time.time() - started
+            # 估算剩余时间：真跑 80 张时，能不能去吃饭全看这个数字
+            eta = (elapsed / done) * (len(samples) - idx) if done else 0
+            print(f"  [{idx}/{len(samples)}] {input_path.name}"
+                  f"  (已用 {elapsed/60:.1f} min，预计还需 {eta/60:.1f} min)")
+
+        if sleep > 0 and idx < len(samples):
+            time.sleep(sleep)
+
+    print(f"  完成 {done} 个（其中续跑跳过 {skipped} 个），失败 {len(failures)} 个")
+    return {"done": done, "skipped": skipped, "failed": len(failures)}
 
 
-def auto_evolve(samples: List[Dict[str, str]], rounds: int, mock: bool, work_dir: Path) -> None:
+
+def auto_evolve(samples: List[Dict[str, str]], rounds: int, mock: bool, work_dir: Path,
+                sleep: float = 0.0, resume: bool = False) -> None:
     """在开发集上完成若干轮“纠错 -> 提案 -> 晋升”。"""
     memory = CaseMemory(PROJECT_ROOT / "memory" / "cases.json")
     for round_no in range(1, rounds + 1):
         round_dir = work_dir / f"dev_round{round_no}"
-        run_group(f"开发集第 {round_no} 轮（进化前）", samples, round_dir, mock, "multi_agent")
+        run_group(f"开发集第 {round_no} 轮（进化前）", samples, round_dir, mock, "multi_agent",
+                  sleep=sleep, resume=resume)
 
         new_cases = _collect_cases_from_predictions(samples, round_dir)
         for case in new_cases:
@@ -141,11 +188,20 @@ def main() -> None:
     parser.add_argument("--rounds", type=int, default=2, help="自进化轮数")
     parser.add_argument("--out", default="reports/experiments", help="输出根目录")
     parser.add_argument("--mock", action="store_true", help="强制模拟模式")
+    parser.add_argument("--sleep", type=float, default=1.0,
+                        help="每个样本之间的间隔秒数（默认 1.0；免费模型并发低，调大可减少 429）")
+    parser.add_argument("--resume", action="store_true",
+                        help="断点续跑：不清空输出目录，跳过已有报告的样本")
+    parser.add_argument("--limit", type=int, default=0,
+                        help="只跑前 N 个样本（0 表示全部），用于先小样本试跑验证链路")
     args = parser.parse_args()
 
     backend = describe_backend()
-    mode_label = "模拟模式" if (args.mock or backend["mode"] == "mock") else f"真实模型 {backend['model']}"
+    use_mock = args.mock or backend["mode"] == "mock"
+    mode_label = "模拟模式" if use_mock else f"真实模型 {backend['model']}"
     print(f"运行模式：{mode_label}")
+    if not use_mock:
+        print(f"接口：{backend['base_url']}｜图片传参：{backend.get('image_format')}")
     if mode_label == "模拟模式":
         print("提示：模拟模式下所有结论都会标记为 simulated，指标只能证明评测管线可用，不能作为实验结论。")
 
@@ -153,6 +209,9 @@ def main() -> None:
     if not test_samples:
         print(f"错误：{args.labels} 中没有样本，请先执行 python scripts/make_demo_dataset.py")
         sys.exit(1)
+    if args.limit > 0:
+        test_samples = test_samples[: args.limit]
+        print(f"已按 --limit 只取前 {len(test_samples)} 个样本")
 
     out_root = PROJECT_ROOT / args.out
     out_root.mkdir(parents=True, exist_ok=True)
@@ -160,13 +219,14 @@ def main() -> None:
 
     names = {"base": "基础识别系统（单模型直出）", "multi": "多 Agent + 工具调用", "evolved": "两轮自进化后"}
     run_dirs: List[tuple] = []
+    kw = {"sleep": args.sleep, "resume": args.resume}
 
     if "base" in groups:
-        run_group(names["base"], test_samples, out_root / "base", args.mock, "baseline")
+        run_group(names["base"], test_samples, out_root / "base", args.mock, "baseline", **kw)
         run_dirs.append((names["base"], out_root / "base"))
 
     if "multi" in groups:
-        run_group(names["multi"], test_samples, out_root / "multi", args.mock, "multi_agent")
+        run_group(names["multi"], test_samples, out_root / "multi", args.mock, "multi_agent", **kw)
         run_dirs.append((names["multi"], out_root / "multi"))
 
     if "evolved" in groups or args.auto_evolve:
@@ -174,9 +234,11 @@ def main() -> None:
         if not dev_samples:
             print(f"警告：{args.dev_labels} 为空，跳过自进化。")
         else:
+            if args.limit > 0:
+                dev_samples = dev_samples[: args.limit]
             print("\n=== 开始两轮自进化（仅使用开发集）===")
-            auto_evolve(dev_samples, args.rounds, args.mock, out_root / "_dev")
-            run_group(names["evolved"], test_samples, out_root / "evolved", args.mock, "multi_agent")
+            auto_evolve(dev_samples, args.rounds, args.mock, out_root / "_dev", **kw)
+            run_group(names["evolved"], test_samples, out_root / "evolved", args.mock, "multi_agent", **kw)
             run_dirs.append((names["evolved"], out_root / "evolved"))
 
     # ---------------- 评测 ----------------
@@ -191,6 +253,11 @@ def main() -> None:
         header = (
             "> ⚠️ **本表由模拟模式生成**：样本结论均标记为 simulated，只能验证评测管线是否跑通，\n"
             "> **不能作为实验结果**。接入真实模型 API 后重新运行本脚本才会得到有效数据。\n\n"
+        )
+    elif args.limit > 0:
+        header = (
+            f"> ⚠️ **本表仅用前 {len(test_samples)} 个样本**（`--limit` 试跑），"
+            "指标只用于确认链路可用，**不是最终实验结果**。\n\n"
         )
 
     md_path = out_root / "comparison.md"

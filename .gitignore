@@ -31,6 +31,11 @@ reports/tools/
 reports/tool_calls.jsonl
 reports/*_report.json
 reports/*_report.md
+# 实验过程目录：试跑、占位数据、中途结果都在这，默认不入库。
+# 最终的正式三组对比结果请用 `git add -f reports/experiments/comparison.*` 显式提交，
+# 避免中途的无效数字被误当成实验结论。
+reports/experiments*/
+reports/api_test/
 
 # ---- 占位演示数据（由脚本生成，不是真实实验数据）----
 data/demo/

@@ -15,11 +15,39 @@ import base64
 import json
 import mimetypes
 import os
+import random
 import re
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+#: 值得重试的 HTTP 状态码。429=限流，5xx=服务端临时故障，408/409/425=瞬时冲突。
+#: 其余 4xx 属于请求本身有问题（模型名写错、参数非法），重试只会浪费额度。
+RETRYABLE_STATUS = {408, 409, 425, 429, 500, 502, 503, 504}
+
+
+def _backoff_seconds(attempt: int, base: float = 2.0, cap: float = 60.0) -> float:
+    """指数退避 + 抖动。
+
+    抖动很重要：组内几个人同时跑同一个免费额度时，固定间隔会让所有请求
+    在同一时刻再次撞上，抖动能把它们错开。
+    """
+    delay = min(cap, base * (2 ** (attempt - 1)))
+    return delay * (0.5 + random.random() * 0.5)
+
+
+def _retry_after_seconds(err: "urllib.error.HTTPError") -> float:
+    """优先采用服务端给的 Retry-After，没有就返回 0 表示用退避值。"""
+    try:
+        raw = err.headers.get("Retry-After") if err.headers else None
+        if raw and str(raw).strip().isdigit():
+            return min(float(str(raw).strip()), 120.0)
+    except Exception:  # noqa: BLE001 - 头信息读不到就退回退避
+        pass
+    return 0.0
+
 
 JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
 
@@ -275,6 +303,7 @@ class OpenAICompatibleVisionLLM(BaseLLM):
         model: Optional[str] = None,
         timeout: int = 120,
         max_retries: int = 2,
+        rate_limit_retries: int = 6,
     ):
         self.api_key = api_key or os.getenv("SAFETY_LLM_API_KEY")
         self.base_url = (
@@ -291,12 +320,16 @@ class OpenAICompatibleVisionLLM(BaseLLM):
             timeout = int(str(env_timeout).strip())
         self.timeout = timeout
         self.max_retries = max_retries
+        # 429 单独的额外重试次数：批量跑 80 张时这是决定成败的参数
+        env_rl = os.getenv("SAFETY_LLM_RATE_LIMIT_RETRIES")
+        if env_rl and str(env_rl).strip().isdigit():
+            rate_limit_retries = int(str(env_rl).strip())
+        self.rate_limit_retries = max(0, rate_limit_retries)
         if not self.api_key:
             raise ValueError("缺少 SAFETY_LLM_API_KEY 环境变量")
 
     # ---------- 底层请求 ----------
     def _post(self, messages: list, response_format: bool = True, temperature: float = 0.1) -> Dict[str, Any]:
-        self._count_call()
         payload: Dict[str, Any] = {
             "model": self.model,
             "messages": messages,
@@ -307,7 +340,12 @@ class OpenAICompatibleVisionLLM(BaseLLM):
 
         body = json.dumps(payload).encode("utf-8")
         last_err: Optional[Exception] = None
-        for attempt in range(self.max_retries + 1):
+        # 429 是免费模型的常态（并发通常只有 1~2），必须给足耐心：
+        # 按指数退避 + 抖动重试，而不是像普通错误那样撞三次就放弃。
+        max_attempts = max(self.max_retries + 1, 2) + self.rate_limit_retries
+        attempt = 0
+        while attempt < max_attempts:
+            attempt += 1
             req = urllib.request.Request(
                 f"{self.base_url}/chat/completions",
                 data=body,
@@ -319,21 +357,41 @@ class OpenAICompatibleVisionLLM(BaseLLM):
             )
             try:
                 with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                    return json.loads(resp.read().decode("utf-8"))
+                    data = json.loads(resp.read().decode("utf-8"))
+                self._count_call()  # 只统计真正成功的调用，成本数字才可信
+                return data
             except urllib.error.HTTPError as err:
                 detail = err.read().decode("utf-8", "ignore")[:500]
                 last_err = RuntimeError(f"HTTP {err.code}: {detail}")
+                # 鉴权失败重试没有意义，立刻报错，避免浪费时间
+                if err.code in (401, 403):
+                    raise RuntimeError(
+                        f"API 鉴权失败（{err.code}），请检查 .env 里的 SAFETY_LLM_API_KEY。"
+                    ) from err
                 # 400 通常是该模型不支持 response_format，降级重试一次
                 if err.code == 400 and response_format:
                     response_format = False
                     payload.pop("response_format", None)
                     body = json.dumps(payload).encode("utf-8")
                     continue
-                if err.code in (401, 403):
-                    raise RuntimeError(f"API 鉴权失败（{err.code}），请检查 SAFETY_LLM_API_KEY。") from err
+                if err.code not in RETRYABLE_STATUS:
+                    # 其余 4xx（模型名写错、请求体非法等）重试无益
+                    raise RuntimeError(f"调用模型失败（不可重试）：{last_err}") from err
+                if attempt >= max_attempts:
+                    break
+                wait = _retry_after_seconds(err) or _backoff_seconds(attempt)
+                time.sleep(wait)
             except Exception as err:  # noqa: BLE001 - 网络类异常统一重试
                 last_err = err
-        raise RuntimeError(f"调用模型失败：{last_err}")
+                if attempt >= max_attempts:
+                    break
+                time.sleep(_backoff_seconds(attempt))
+        raise RuntimeError(
+            f"调用模型失败（已重试 {attempt} 次）：{last_err}\n"
+            "若是 429，说明触发了免费模型的并发/频率限制，可稍等几分钟再跑，"
+            "或把批量脚本的 --sleep 调大。"
+        )
+
 
     @staticmethod
     def _content(data: Dict[str, Any]) -> str:
