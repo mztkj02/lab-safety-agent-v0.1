@@ -237,6 +237,9 @@ class OpenAICompatibleVisionLLM(BaseLLM):
             base_url or os.getenv("SAFETY_LLM_BASE_URL") or "https://api.openai.com/v1"
         ).rstrip("/")
         self.model = model or os.getenv("SAFETY_LLM_MODEL") or "gpt-4o-mini"
+        # 图片传参格式：data_uri（OpenAI 标准，"data:image/jpeg;base64,..."）
+        # 或 base64（只给裸 base64 串）。智谱 GLM-4V 等国内接口有的只吃后者。
+        self.image_format = (os.getenv("SAFETY_LLM_IMAGE_FORMAT") or "data_uri").strip().lower()
         self.timeout = timeout
         self.max_retries = max_retries
         if not self.api_key:
@@ -296,9 +299,11 @@ class OpenAICompatibleVisionLLM(BaseLLM):
         for path in image_paths:
             mime = mimetypes.guess_type(path.name)[0] or "image/jpeg"
             image_b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+            url = (image_b64 if self.image_format == "base64"
+                   else f"data:{mime};base64,{image_b64}")
             content.append({
                 "type": "image_url",
-                "image_url": {"url": f"data:{mime};base64,{image_b64}"},
+                "image_url": {"url": url},
             })
         data = self._post([{"role": "user", "content": content}])
         return extract_json(self._content(data))
@@ -322,6 +327,7 @@ def describe_backend() -> Dict[str, Any]:
         "has_api_key": has_key,
         "base_url": os.getenv("SAFETY_LLM_BASE_URL", "https://api.openai.com/v1"),
         "model": os.getenv("SAFETY_LLM_MODEL", "gpt-4o-mini"),
+        "image_format": (os.getenv("SAFETY_LLM_IMAGE_FORMAT") or "data_uri").strip().lower(),
         "mode": "api" if has_key else "mock",
     }
 

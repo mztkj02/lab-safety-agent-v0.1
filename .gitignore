@@ -35,6 +35,11 @@ data/demo/
 data/demo_video/
 data/demo_labels_*.csv
 
+# ---- 公开数据集：图片不入库（第三方数据，可用 scripts/fetch_lab_dataset.py 重新拉取）
+# 但标注 CSV（data/lab_labels_*.csv）要入库——那是我们的标注成果
+data/lab/
+.cache/
+
 # ---- 实验输出 ----
 # 默认忽略（往往是占位数据跑出来的）。
 # 用真实数据跑出结果后，请显式加入：git add -f reports/experiments
