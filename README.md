@@ -12,6 +12,11 @@
 ```bash
 cd <项目目录>
 
+# 0. 建虚拟环境（只需一次）
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt   # Windows
+# source .venv/bin/activate && pip install -r requirements.txt  # macOS / Linux
+
 # 1. 看看当前环境（会告诉你有没有配置 API Key）
 python src/main.py status
 
@@ -191,17 +196,24 @@ python src/main.py rollback --version v0.2
 
 ## 七、实验与评测
 
-一键跑通课程要求的三组对比：
+一键跑通课程要求的三组对比（**当前正式数据集**，84 个样本）：
 
 ```bash
-# 先准备数据（占位数据仅用于跑通流程）
-python scripts/make_demo_dataset.py --count 80 --video
-
-# 基础系统 / 多 Agent / 两轮自进化后，三组对比
 python scripts/run_experiment.py \
-  --labels data/demo_labels_test.csv \
-  --dev-labels data/demo_labels_dev.csv \
-  --groups base,multi --auto-evolve --rounds 2
+  --labels data/web_labels_test.csv \
+  --dev-labels data/web_labels_dev.csv \
+  --groups base,multi,evolved --auto-evolve --rounds 2
+```
+
+数据集的构成、来源与局限见 [docs/数据说明.md](docs/数据说明.md)，
+一句话版本：**35 张真实图库照片 + 49 张文生图合成样本**，
+因为公开图库里根本不存在「违规现场」照片。
+
+历史占位数据（仅用于跑通链路）：
+
+```bash
+python scripts/make_demo_dataset.py --count 80 --video
+python scripts/run_experiment.py --labels data/demo_labels_test.csv --groups base,multi
 ```
 
 输出：`reports/experiments/comparison.md`（含精确率、召回率、误报漏报、处理时间、调用成本）

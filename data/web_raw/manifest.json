@@ -1,0 +1,978 @@
+{
+  "license": "Pexels License (free to use, attribution appreciated)",
+  "source": "https://www.pexels.com",
+  "items": [
+    {
+      "photo_id": "9243559",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "chemistry lab",
+      "file": "data/web_raw/9243559.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/9243559/pexels-photo-9243559.jpeg"
+    },
+    {
+      "photo_id": "8851786",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "laboratory research",
+      "file": "data/web_raw/8851786.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8851786/pexels-photo-8851786.jpeg"
+    },
+    {
+      "photo_id": "12703057",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "biochemistry",
+      "file": "data/web_raw/12703057.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/12703057/pexels-photo-12703057.jpeg"
+    },
+    {
+      "photo_id": "37951908",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "research lab",
+      "file": "data/web_raw/37951908.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/37951908/pexels-photo-37951908.jpeg"
+    },
+    {
+      "photo_id": "14829613",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "medical laboratory",
+      "file": "data/web_raw/14829613.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/14829613/pexels-photo-14829613.jpeg"
+    },
+    {
+      "photo_id": "18471527",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "science lab",
+      "file": "data/web_raw/18471527.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/18471527/pexels-photo-18471527.jpeg"
+    },
+    {
+      "photo_id": "8442029",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "medical lab",
+      "file": "data/web_raw/8442029.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8442029/pexels-photo-8442029.jpeg"
+    },
+    {
+      "photo_id": "6627687",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "lab testing",
+      "file": "data/web_raw/6627687.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/6627687/pexels-photo-6627687.jpeg"
+    },
+    {
+      "photo_id": "8532848",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "science",
+      "file": "data/web_raw/8532848.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8532848/pexels-photo-8532848.jpeg"
+    },
+    {
+      "photo_id": "8851081",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "biotechnology",
+      "file": "data/web_raw/8851081.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8851081/pexels-photo-8851081.jpeg"
+    },
+    {
+      "photo_id": "10419527",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "microbiology",
+      "file": "data/web_raw/10419527.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/10419527/pexels-photo-10419527.jpeg"
+    },
+    {
+      "photo_id": "8531365",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "scientific research",
+      "file": "data/web_raw/8531365.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8531365/pexels-photo-8531365.jpeg"
+    },
+    {
+      "photo_id": "8533087",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "Free Vibrant test tubes filled with liquids in a modern lab setting, showcasing scientific exploration. Stock Photo",
+      "file": "data/web_raw/8533087.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8533087/pexels-photo-8533087.jpeg"
+    },
+    {
+      "photo_id": "8442649",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "Free A laboratory flask filled with blue liquid against a pink gradient background. Stock Photo",
+      "file": "data/web_raw/8442649.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8442649/pexels-photo-8442649.jpeg"
+    },
+    {
+      "photo_id": "12591661",
+      "query": "chemistry laboratory",
+      "intent": "正常实验室环境、器材陈列",
+      "alt": "Free A detailed view of vintage laboratory glassware and equipment in a historical science lab setting. Stock Photo",
+      "file": "data/web_raw/12591661.jpg",
+      "page": "https://www.pexels.com/search/chemistry-laboratory/",
+      "image_url": "https://images.pexels.com/photos/12591661/pexels-photo-12591661.jpeg"
+    },
+    {
+      "photo_id": "33394245",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "medical equipment",
+      "file": "data/web_raw/33394245.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/33394245/pexels-photo-33394245.jpeg"
+    },
+    {
+      "photo_id": "19814026",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "surgical instruments",
+      "file": "data/web_raw/19814026.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/19814026/pexels-photo-19814026.jpeg"
+    },
+    {
+      "photo_id": "6129679",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "medical technology",
+      "file": "data/web_raw/6129679.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/6129679/pexels-photo-6129679.jpeg"
+    },
+    {
+      "photo_id": "19497086",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "pharmaceutical industry",
+      "file": "data/web_raw/19497086.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/19497086/pexels-photo-19497086.jpeg"
+    },
+    {
+      "photo_id": "3653771",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "equipment",
+      "file": "data/web_raw/3653771.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/3653771/pexels-photo-3653771.jpeg"
+    },
+    {
+      "photo_id": "18540320",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "industrial machinery",
+      "file": "data/web_raw/18540320.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/18540320/pexels-photo-18540320.jpeg"
+    },
+    {
+      "photo_id": "6285355",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "lab test",
+      "file": "data/web_raw/6285355.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/6285355/pexels-photo-6285355.jpeg"
+    },
+    {
+      "photo_id": "12285817",
+      "query": "laboratory equipment",
+      "intent": "正常场景与仪器特写",
+      "alt": "research and development",
+      "file": "data/web_raw/12285817.jpg",
+      "page": "https://www.pexels.com/search/laboratory-equipment/",
+      "image_url": "https://images.pexels.com/photos/12285817/pexels-photo-12285817.jpeg"
+    },
+    {
+      "photo_id": "8532831",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "Free Two scientists in protective gear conduct research using microscopes and test tubes in a brightly lit lab. Stock Photo",
+      "file": "data/web_raw/8532831.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/8532831/pexels-photo-8532831.jpeg"
+    },
+    {
+      "photo_id": "9243372",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "scientist research",
+      "file": "data/web_raw/9243372.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/9243372/pexels-photo-9243372.jpeg"
+    },
+    {
+      "photo_id": "3735711",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "laboratory scientist",
+      "file": "data/web_raw/3735711.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/3735711/pexels-photo-3735711.jpeg"
+    },
+    {
+      "photo_id": "9243751",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "scientists",
+      "file": "data/web_raw/9243751.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/9243751/pexels-photo-9243751.jpeg"
+    },
+    {
+      "photo_id": "4031319",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "researcher",
+      "file": "data/web_raw/4031319.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/4031319/pexels-photo-4031319.jpeg"
+    },
+    {
+      "photo_id": "4031524",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "researchers",
+      "file": "data/web_raw/4031524.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/4031524/pexels-photo-4031524.jpeg"
+    },
+    {
+      "photo_id": "9243558",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "Free Two scientists in protective gear work on an experiment in a laboratory setting. Stock Photo",
+      "file": "data/web_raw/9243558.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/9243558/pexels-photo-9243558.jpeg"
+    },
+    {
+      "photo_id": "15831822",
+      "query": "scientist laboratory",
+      "intent": "人物 + 防护装备，可筛出未规范佩戴的样本",
+      "alt": "Free A scientist wearing protective gear performs a meticulous experiment in a laboratory setting. Stock Photo",
+      "file": "data/web_raw/15831822.jpg",
+      "page": "https://www.pexels.com/search/scientist-laboratory/",
+      "image_url": "https://images.pexels.com/photos/15831822/pexels-photo-15831822.jpeg"
+    },
+    {
+      "photo_id": "38093862",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "Free Laboratory setup with a beaker heated by a Bunsen burner, illustrating a chemical experiment. Stock Photo",
+      "file": "data/web_raw/38093862.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/38093862/pexels-photo-38093862.jpeg"
+    },
+    {
+      "photo_id": "33833476",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "stove",
+      "file": "data/web_raw/33833476.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/33833476/pexels-photo-33833476.jpeg"
+    },
+    {
+      "photo_id": "13422435",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "gas stove",
+      "file": "data/web_raw/13422435.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/13422435/pexels-photo-13422435.jpeg"
+    },
+    {
+      "photo_id": "9574397",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "microscope",
+      "file": "data/web_raw/9574397.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/9574397/pexels-photo-9574397.jpeg"
+    },
+    {
+      "photo_id": "7518749",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "hookah",
+      "file": "data/web_raw/7518749.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/7518749/pexels-photo-7518749.jpeg"
+    },
+    {
+      "photo_id": "39183052",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "smoke detector",
+      "file": "data/web_raw/39183052.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/39183052/pexels-photo-39183052.jpeg"
+    },
+    {
+      "photo_id": "39872047",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "candle",
+      "file": "data/web_raw/39872047.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/39872047/pexels-photo-39872047.jpeg"
+    },
+    {
+      "photo_id": "13658068",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "lighter",
+      "file": "data/web_raw/13658068.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/13658068/pexels-photo-13658068.jpeg"
+    },
+    {
+      "photo_id": "29848733",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "gas cylinder",
+      "file": "data/web_raw/29848733.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/29848733/pexels-photo-29848733.jpeg"
+    },
+    {
+      "photo_id": "8564615",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "candle flame",
+      "file": "data/web_raw/8564615.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/8564615/pexels-photo-8564615.jpeg"
+    },
+    {
+      "photo_id": "36152008",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "boiler",
+      "file": "data/web_raw/36152008.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/36152008/pexels-photo-36152008.jpeg"
+    },
+    {
+      "photo_id": "923289",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "heater",
+      "file": "data/web_raw/923289.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/923289/pexels-photo-923289.jpeg"
+    },
+    {
+      "photo_id": "7936983",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "blender",
+      "file": "data/web_raw/7936983.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/7936983/pexels-photo-7936983.jpeg"
+    },
+    {
+      "photo_id": "14856482",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "torch",
+      "file": "data/web_raw/14856482.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/14856482/pexels-photo-14856482.jpeg"
+    },
+    {
+      "photo_id": "9153247",
+      "query": "bunsen burner",
+      "intent": "明火/加热源，用于热源附近易燃物判定",
+      "alt": "oil lamp",
+      "file": "data/web_raw/9153247.jpg",
+      "page": "https://www.pexels.com/search/bunsen-burner/",
+      "image_url": "https://images.pexels.com/photos/9153247/pexels-photo-9153247.jpeg"
+    },
+    {
+      "photo_id": "10187132",
+      "query": "laboratory glassware",
+      "intent": "玻璃器皿，易混淆样本来源",
+      "alt": "chemicals",
+      "file": "data/web_raw/10187132.jpg",
+      "page": "https://www.pexels.com/search/laboratory-glassware/",
+      "image_url": "https://images.pexels.com/photos/10187132/pexels-photo-10187132.jpeg"
+    },
+    {
+      "photo_id": "31406904",
+      "query": "laboratory glassware",
+      "intent": "玻璃器皿，易混淆样本来源",
+      "alt": "pharmaceutical",
+      "file": "data/web_raw/31406904.jpg",
+      "page": "https://www.pexels.com/search/laboratory-glassware/",
+      "image_url": "https://images.pexels.com/photos/31406904/pexels-photo-31406904.jpeg"
+    },
+    {
+      "photo_id": "9629701",
+      "query": "laboratory glassware",
+      "intent": "玻璃器皿，易混淆样本来源",
+      "alt": "Free Close-up of various lab glassware with red liquids, ideal for scientific or educational use. Stock Photo",
+      "file": "data/web_raw/9629701.jpg",
+      "page": "https://www.pexels.com/search/laboratory-glassware/",
+      "image_url": "https://images.pexels.com/photos/9629701/pexels-photo-9629701.jpeg"
+    },
+    {
+      "photo_id": "7683595",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee break",
+      "file": "data/web_raw/7683595.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/7683595/pexels-photo-7683595.jpeg"
+    },
+    {
+      "photo_id": "27860686",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee",
+      "file": "data/web_raw/27860686.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/27860686/pexels-photo-27860686.jpeg"
+    },
+    {
+      "photo_id": "11206424",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee laptop",
+      "file": "data/web_raw/11206424.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/11206424/pexels-photo-11206424.jpeg"
+    },
+    {
+      "photo_id": "27589853",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee cup",
+      "file": "data/web_raw/27589853.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/27589853/pexels-photo-27589853.jpeg"
+    },
+    {
+      "photo_id": "13523793",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "cup of coffee",
+      "file": "data/web_raw/13523793.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/13523793/pexels-photo-13523793.jpeg"
+    },
+    {
+      "photo_id": "6152270",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee bar",
+      "file": "data/web_raw/6152270.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/6152270/pexels-photo-6152270.jpeg"
+    },
+    {
+      "photo_id": "6747870",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee cafe",
+      "file": "data/web_raw/6747870.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/6747870/pexels-photo-6747870.jpeg"
+    },
+    {
+      "photo_id": "12900864",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee drink",
+      "file": "data/web_raw/12900864.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/12900864/pexels-photo-12900864.jpeg"
+    },
+    {
+      "photo_id": "38523136",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "espresso coffee",
+      "file": "data/web_raw/38523136.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/38523136/pexels-photo-38523136.jpeg"
+    },
+    {
+      "photo_id": "11340975",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee brewing",
+      "file": "data/web_raw/11340975.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/11340975/pexels-photo-11340975.jpeg"
+    },
+    {
+      "photo_id": "16682442",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee beans",
+      "file": "data/web_raw/16682442.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/16682442/pexels-photo-16682442.jpeg"
+    },
+    {
+      "photo_id": "6948146",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "drinking coffee",
+      "file": "data/web_raw/6948146.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/6948146/pexels-photo-6948146.jpeg"
+    },
+    {
+      "photo_id": "16299079",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "morning coffee",
+      "file": "data/web_raw/16299079.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/16299079/pexels-photo-16299079.jpeg"
+    },
+    {
+      "photo_id": "16781258",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "coffee shops",
+      "file": "data/web_raw/16781258.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/16781258/pexels-photo-16781258.jpeg"
+    },
+    {
+      "photo_id": "1210020",
+      "query": "coffee cup desk",
+      "intent": "实验区饮食类素材",
+      "alt": "Free A top-down view of a coffee mug beside a laptop keyboard on a desk indoors. Stock Photo",
+      "file": "data/web_raw/1210020.jpg",
+      "page": "https://www.pexels.com/search/coffee-cup-desk/",
+      "image_url": "https://images.pexels.com/photos/1210020/pexels-photo-1210020.jpeg"
+    },
+    {
+      "photo_id": "5979625",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "Free Close-up of a person standing barefoot on a wet wooden floor indoors. Stock Photo",
+      "file": "data/web_raw/5979625.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/5979625/pexels-photo-5979625.jpeg"
+    },
+    {
+      "photo_id": "3935327",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "flooring",
+      "file": "data/web_raw/3935327.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/3935327/pexels-photo-3935327.jpeg"
+    },
+    {
+      "photo_id": "38942672",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "floor",
+      "file": "data/web_raw/38942672.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/38942672/pexels-photo-38942672.jpeg"
+    },
+    {
+      "photo_id": "36178801",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "wood floor",
+      "file": "data/web_raw/36178801.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/36178801/pexels-photo-36178801.jpeg"
+    },
+    {
+      "photo_id": "39238314",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "waterproofing",
+      "file": "data/web_raw/39238314.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/39238314/pexels-photo-39238314.jpeg"
+    },
+    {
+      "photo_id": "19666087",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "bathroom renovation",
+      "file": "data/web_raw/19666087.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/19666087/pexels-photo-19666087.jpeg"
+    },
+    {
+      "photo_id": "29462819",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "restroom",
+      "file": "data/web_raw/29462819.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/29462819/pexels-photo-29462819.jpeg"
+    },
+    {
+      "photo_id": "4098579",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "hygiene",
+      "file": "data/web_raw/4098579.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/4098579/pexels-photo-4098579.jpeg"
+    },
+    {
+      "photo_id": "6240578",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "drainage",
+      "file": "data/web_raw/6240578.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/6240578/pexels-photo-6240578.jpeg"
+    },
+    {
+      "photo_id": "13306717",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "shower",
+      "file": "data/web_raw/13306717.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/13306717/pexels-photo-13306717.jpeg"
+    },
+    {
+      "photo_id": "40151909",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "tile",
+      "file": "data/web_raw/40151909.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/40151909/pexels-photo-40151909.jpeg"
+    },
+    {
+      "photo_id": "4300078",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "bathroom",
+      "file": "data/web_raw/4300078.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/4300078/pexels-photo-4300078.jpeg"
+    },
+    {
+      "photo_id": "7264364",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "foot",
+      "file": "data/web_raw/7264364.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/7264364/pexels-photo-7264364.jpeg"
+    },
+    {
+      "photo_id": "8481931",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "water damage",
+      "file": "data/web_raw/8481931.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/8481931/pexels-photo-8481931.jpeg"
+    },
+    {
+      "photo_id": "8488035",
+      "query": "wet floor",
+      "intent": "地面洒漏/湿滑，通道风险素材",
+      "alt": "plumbing",
+      "file": "data/web_raw/8488035.jpg",
+      "page": "https://www.pexels.com/search/wet-floor/",
+      "image_url": "https://images.pexels.com/photos/8488035/pexels-photo-8488035.jpeg"
+    },
+    {
+      "photo_id": "4553180",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "Free A person collapsed under stacks of cardboard boxes in an empty room, illustrating the stress of moving. Stock Photo",
+      "file": "data/web_raw/4553180.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/4553180/pexels-photo-4553180.jpeg"
+    },
+    {
+      "photo_id": "8386521",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "clutter",
+      "file": "data/web_raw/8386521.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/8386521/pexels-photo-8386521.jpeg"
+    },
+    {
+      "photo_id": "15635246",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "user-generated content",
+      "file": "data/web_raw/15635246.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/15635246/pexels-photo-15635246.jpeg"
+    },
+    {
+      "photo_id": "6185632",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "example",
+      "file": "data/web_raw/6185632.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/6185632/pexels-photo-6185632.jpeg"
+    },
+    {
+      "photo_id": "13521469",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "content",
+      "file": "data/web_raw/13521469.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/13521469/pexels-photo-13521469.jpeg"
+    },
+    {
+      "photo_id": "7567551",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "forms",
+      "file": "data/web_raw/7567551.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/7567551/pexels-photo-7567551.jpeg"
+    },
+    {
+      "photo_id": "8102674",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "editor",
+      "file": "data/web_raw/8102674.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/8102674/pexels-photo-8102674.jpeg"
+    },
+    {
+      "photo_id": "9281786",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "edit",
+      "file": "data/web_raw/9281786.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/9281786/pexels-photo-9281786.jpeg"
+    },
+    {
+      "photo_id": "37568245",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "admin",
+      "file": "data/web_raw/37568245.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/37568245/pexels-photo-37568245.jpeg"
+    },
+    {
+      "photo_id": "35030584",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "d-log",
+      "file": "data/web_raw/35030584.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/35030584/pexels-photo-35030584.jpeg"
+    },
+    {
+      "photo_id": "7430714",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "subscription",
+      "file": "data/web_raw/7430714.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/7430714/pexels-photo-7430714.jpeg"
+    },
+    {
+      "photo_id": "7054793",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "organized",
+      "file": "data/web_raw/7054793.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/7054793/pexels-photo-7054793.jpeg"
+    },
+    {
+      "photo_id": "3620356",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "recent",
+      "file": "data/web_raw/3620356.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/3620356/pexels-photo-3620356.jpeg"
+    },
+    {
+      "photo_id": "33305381",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "collections",
+      "file": "data/web_raw/33305381.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/33305381/pexels-photo-33305381.jpeg"
+    },
+    {
+      "photo_id": "11035371",
+      "query": "cluttered floor boxes",
+      "intent": "通道堵塞素材",
+      "alt": "html",
+      "file": "data/web_raw/11035371.jpg",
+      "page": "https://www.pexels.com/search/cluttered-floor-boxes/",
+      "image_url": "https://images.pexels.com/photos/11035371/pexels-photo-11035371.jpeg"
+    },
+    {
+      "photo_id": "7789650",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "Free Close-up of different colored protective eyewear on display, featuring yellow, blue, and black designs. Stock Photo",
+      "file": "data/web_raw/7789650.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/7789650/pexels-photo-7789650.jpeg"
+    },
+    {
+      "photo_id": "5201989",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "eyewear",
+      "file": "data/web_raw/5201989.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/5201989/pexels-photo-5201989.jpeg"
+    },
+    {
+      "photo_id": "7230876",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "ppe",
+      "file": "data/web_raw/7230876.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/7230876/pexels-photo-7230876.jpeg"
+    },
+    {
+      "photo_id": "5202048",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "sunglasses",
+      "file": "data/web_raw/5202048.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/5202048/pexels-photo-5202048.jpeg"
+    },
+    {
+      "photo_id": "40180238",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "smart glasses",
+      "file": "data/web_raw/40180238.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/40180238/pexels-photo-40180238.jpeg"
+    },
+    {
+      "photo_id": "5202049",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "glasses",
+      "file": "data/web_raw/5202049.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/5202049/pexels-photo-5202049.jpeg"
+    },
+    {
+      "photo_id": "26575042",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "sunglass",
+      "file": "data/web_raw/26575042.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/26575042/pexels-photo-26575042.jpeg"
+    },
+    {
+      "photo_id": "33914927",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "construction safety",
+      "file": "data/web_raw/33914927.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/33914927/pexels-photo-33914927.jpeg"
+    },
+    {
+      "photo_id": "7561900",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "vr headset",
+      "file": "data/web_raw/7561900.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/7561900/pexels-photo-7561900.jpeg"
+    },
+    {
+      "photo_id": "34965713",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "hard hat",
+      "file": "data/web_raw/34965713.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/34965713/pexels-photo-34965713.jpeg"
+    },
+    {
+      "photo_id": "8442810",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "health and safety",
+      "file": "data/web_raw/8442810.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/8442810/pexels-photo-8442810.jpeg"
+    },
+    {
+      "photo_id": "1683345",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "binoculars",
+      "file": "data/web_raw/1683345.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/1683345/pexels-photo-1683345.jpeg"
+    },
+    {
+      "photo_id": "8342953",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "eye care",
+      "file": "data/web_raw/8342953.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/8342953/pexels-photo-8342953.jpeg"
+    },
+    {
+      "photo_id": "5843338",
+      "query": "safety goggles",
+      "intent": "护目镜摆放，易混淆（有护目镜但未佩戴）",
+      "alt": "contact lens",
+      "file": "data/web_raw/5843338.jpg",
+      "page": "https://www.pexels.com/search/safety-goggles/",
+      "image_url": "https://images.pexels.com/photos/5843338/pexels-photo-5843338.jpeg"
+    }
+  ]
+}

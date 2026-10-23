@@ -75,6 +75,9 @@ class AgentTrace:
     tool_calls: List[Dict[str, Any]] = field(default_factory=list)
     conflicts: List[str] = field(default_factory=list)
     duration_ms: Optional[int] = None
+    #: 该 Agent 执行中出现的致命错误（调用失败等）。非空表示这一步没真正完成，
+    #: 不能把「没输出风险」解释成「场景安全」。
+    error: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -99,10 +102,18 @@ class AnalysisReport:
     model_calls: int = 0
     tool_calls: int = 0
     conflicts: List[Dict[str, Any]] = field(default_factory=list)
+    #: 分析失败记录。任何一帧的模型调用彻底失败都会记在这里——
+    #: 失败绝不能被当成「未发现风险」静默吞掉，否则漏报率会被系统性低估。
+    analysis_errors: List[str] = field(default_factory=list)
     disclaimer: str = (
         "本结果用于教学与辅助分析，必须人工复核；“未识别到风险”不等于“场景安全”。"
         "模拟(mock)模式的输出不构成任何真实识别结论。"
     )
+
+    @property
+    def failed(self) -> bool:
+        """整体分析是否失败（有帧彻底没跑成）。"""
+        return bool(self.analysis_errors)
 
     def summary(self) -> Dict[str, Any]:
         by_status: Dict[str, int] = {}
@@ -118,6 +129,8 @@ class AnalysisReport:
             "high_risk": sum(1 for f in self.findings if f.severity == "high"),
             "needs_human_review": sum(1 for f in self.findings if f.needs_human_review),
             "conflict_count": len(self.conflicts),
+            "analysis_failed": self.failed,
+            "analysis_error_count": len(self.analysis_errors),
         }
 
     def to_dict(self) -> Dict[str, Any]:
@@ -137,6 +150,7 @@ class AnalysisReport:
             "summary": self.summary(),
             "findings": [f.to_dict() for f in self.findings],
             "conflicts": self.conflicts,
+            "analysis_errors": self.analysis_errors,
             "traces": [t.to_dict() for t in self.traces],
             "disclaimer": self.disclaimer,
         }

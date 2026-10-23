@@ -22,7 +22,7 @@ import shutil
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = PROJECT_ROOT / "src"
@@ -55,18 +55,24 @@ def run_group(
     analysis_mode: str,
     sleep: float = 0.0,
     resume: bool = False,
+    ablation: Optional[Dict[str, bool]] = None,
+    strategy_path: Optional[Path] = None,
 ) -> Dict[str, int]:
     """跑一组样本。
 
     `resume=True` 时不清空目录、跳过已有报告的样本——真实模型跑 80 张要几十分钟，
     中途断线（429、断网、手滑 Ctrl+C）后不该从头再来。
+
+    `ablation` 用于关掉某个关键功能做对比（课程要求的消融实验）。
+    `strategy_path` 用于指定策略版本 —— 消融必须和参照组用同一份策略才可比。
     """
     if out_dir.exists() and not resume:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     pipeline = SafetyAnalysisPipeline(
-        PROJECT_ROOT, CURRENT_STRATEGY, force_mock=mock, analysis_mode=analysis_mode
+        PROJECT_ROOT, strategy_path or CURRENT_STRATEGY, force_mock=mock,
+        analysis_mode=analysis_mode, ablation=ablation,
     )
     print(f"\n--- 运行实验组：{name}（{len(samples)} 个样本，模式 {analysis_mode}）---")
 

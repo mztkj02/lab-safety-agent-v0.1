@@ -1,41 +1,79 @@
 # 数据集组织说明
 
-## 目录建议
+## 当前数据集：`web_*` 两路合并集（84 个独立样本）
 
 ```text
 data/
-  dev/       # 开发集，用于调试提示词、规则和 Agent 流程
-  test/      # 固定测试集，只用于最终评测，不参与自进化
-  labels_dev.csv
-  labels_test.csv
+  web_raw/               # A 路：Pexels 真实实验室照片（图片不入库，manifest.json 入库）
+    manifest.json        #   采集清单：photo_id / 查询词 / 来源页 / 授权说明
+  web_selection.json     # 人工逐张阅图后的入选名单 + 标注结论
+  synth/                 # B 路：文生图合成样本（JPEG 入库）
+    synth_manifest.json  #   每张图对应的提示词、风险类别、是否易混淆
+  web_labels_dev.csv     # 开发集 41 条（可用于自进化）
+  web_labels_test.csv    # 测试集 43 条（只用于最终评测）
+  dataset_summary.json   # 来源与类别分布摘要
 ```
 
-## 标注字段
+### 为什么是两路素材
 
-每条样本建议包含：
+| 来源 | 数量 | 覆盖 | 性质 |
+| --- | --- | --- | --- |
+| Pexels 公开图库 | 35 | 真实实验室的**规范场景** + 少量陷阱 | 真实拍摄，Pexels License |
+| 文生图合成 | 49 | 四类**违规现场** + 精心设计的易混淆样本 | **合成，非真实拍摄** |
 
-- `sample_id`：样本编号。
-- `file_path`：图片或视频路径。
+公开图库不存在「试剂瓶没贴标签」「实验台上摆着咖啡」「地面洒漏没人处理」这类照片 ——
+没有人会去拍违规现场。因此违规类样本只能靠合成图补，这一点必须在报告中明确披露，
+不能把合成画面说成实拍数据。
+
+### 风险类型与分布
+
+| 类别 | dev | test | 合计 |
+| --- | --- | --- | --- |
+| `normal` | 25 | 26 | 51 |
+| `ppe_missing` | 4 | 4 | 8 |
+| `reagent_management` | 3 | 3 | 6 |
+| `flammable_near_heat` | 3 | 3 | 6 |
+| `food_or_drink` | 3 | 3 | 6 |
+| `spill_or_obstruction` | 3 | 4 | 7 |
+| **合计** | **41** | **43** | **84** |
+
+类别明显不均衡（normal 占 61%）。这是「违规场景本身稀少」的真实反映，
+不应通过复制样本把数字做平 —— 那会虚增指标。评测时以 macro F1 与逐类 P/R 为主，
+accuracy 只作参考。
+
+### 标注字段
+
+- `sample_id`：样本编号，`web_<photo_id>` 或 `synth_<类别>_<序号>`。
+- `file_path`：图片路径。
 - `split`：dev 或 test。
 - `risk_type`：风险类型；正常样本填 `normal`。
-- `severity`：low / medium / high / uncertain / normal。
-- `evidence`：人工标注证据。
+- `severity`：low / medium / high / normal。
+- `evidence`：人工标注证据（以「【易混淆】」开头的是陷阱样本）。
 - `location`：风险位置。
-- `notes`：备注。
+- `notes`：来源标记（`来源=pexels` / `来源=synthetic`）与原始提示词或图片链接。
 
-## 风险类型
+### 易混淆样本（20 张）
 
-第一版建议使用：
+课程要求数据集必须包含「容易混淆」的样本。本数据集的陷阱设计针对四类高频误报：
 
-- `normal`
-- `ppe_missing`
-- `reagent_management`
-- `flammable_near_heat`
-- `food_or_drink`
-- `spill_or_obstruction`
+1. **洗瓶 / 蒸馏水瓶 vs 饮料容器** —— 外形相似，标签可区分；
+2. **断电电热板 vs 工作中的热源** —— 指示灯与显示屏可区分；
+3. **地面窗光反光 vs 液体洒漏** —— 砖缝与浮尘是反证；
+4. **护目镜摆放/推到额头 vs 未佩戴** —— 需区分「器材在场」与「正确佩戴」。
+
+这些样本的真值都是 `normal`，模型若报出风险即为误报 —— 用来验证证据复核 Agent
+能否用可见证据推翻感知层的草率结论。
+
+## 历史数据：`demo_*` 占位集
+
+`data/demo/`、`data/demo_labels_*.csv` 由 `scripts/make_demo_dataset.py` 生成，
+是纯色块 + 文字的**程序化占位图**，只用于在没有任何数据时跑通链路，
+不能作为实验数据。已被上面的 `web_*` 数据集取代。
 
 ## 注意
 
 - 同一视频的相邻帧不要拆到 dev 和 test 两边。
 - 测试集不要用于提示词修改、规则修改或案例记忆。
-- 不要制造危险场景采集数据。
+- 不要为了采集数据去制造危险场景，也不要使用网上随意抓取的图片充当实拍。
+- 合成样本若用于「训练/拟合」，需在报告中说明其局限：合成图的光照与构图分布
+  与真实照片不同，模型可能在真实场景上表现更差。

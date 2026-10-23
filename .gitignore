@@ -47,6 +47,19 @@ data/demo_labels_*.csv
 data/lab/
 .cache/
 
+# ---- 网络图库素材（Pexels 等）：原始图片不入库 ----
+# 属于第三方素材且体积较大，可用 scripts/fetch_web_images.py 重新采集；
+# 但 manifest.json 必须入库 —— 它记录了每张图的 photo_id、来源页与授权说明，
+# 是报告「数据来源」一节唯一的凭据。
+data/web_raw/*.jpg
+!data/web_raw/manifest.json
+
+# ---- 合成样本的原始 PNG 备份不入库（体积大，JPEG 版本已入库）----
+data/synth/_original_png/
+
+# ---- 标注辅助图：接触印相表（由 scripts/make_contact_sheet.py 重新生成）----
+reports/sheets/
+
 # ---- 自拍素材与导入产物 ----
 # inbox 是手机的原始拷贝（含 GPS 等元数据，绝不能传）；raw 是归一化后的图。
 # 两者都可由 scripts/ingest_photos.py 重新生成。

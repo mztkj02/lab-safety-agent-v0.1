@@ -42,7 +42,7 @@ def load_labels(labels_path: Path) -> Dict[str, Set[str]]:
 
 
 def load_predictions(reports_dir: Path) -> Dict[str, Dict[str, Set[str]]]:
-    """从报告目录读取预测。返回 sample_id -> {positive, abstain}。"""
+    """从报告目录读取预测。返回 sample_id -> {positive, abstain, failed}。"""
     predictions: Dict[str, Dict[str, Set[str]]] = {}
     for path in sorted(reports_dir.glob("*_report.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -57,7 +57,13 @@ def load_predictions(reports_dir: Path) -> Dict[str, Dict[str, Set[str]]]:
                 positive.add(risk_type)
             elif status in ABSTAIN_STATUSES:
                 abstain.add(risk_type)
-        predictions[sample_id] = {"positive": positive, "abstain": abstain}
+        predictions[sample_id] = {
+            "positive": positive,
+            "abstain": abstain,
+            # 分析彻底失败的样本：模型没跑成，它的「无风险」不是结论，不能算进 P/R。
+            # 早期版本没这个字段，失败样本被当成正常样本，漏报率被严重低估。
+            "failed": bool(data.get("analysis_errors")),
+        }
     return predictions
 
 
@@ -88,11 +94,20 @@ def evaluate_run(
     abstained_samples = 0
     missed_samples: List[str] = []
     false_positive_samples: List[str] = []
+    failed_samples: List[str] = []
     evaluated = 0
 
     for sample_id, true_set in labels.items():
         true_risks = {t for t in true_set if t != NORMAL}
         pred_all = predictions.get(sample_id)
+
+        # 分析失败的样本单独统计，不进入 P/R/误报/漏报：
+        # 模型根本没跑成，把它的空输出算成「漏报」会污染指标，
+        # 算成「正常」更糟。诚实的做法是单列失败率。
+        if pred_all is not None and pred_all.get("failed"):
+            failed_samples.append(sample_id)
+            continue
+
         pred_set = set(pred_all["positive"]) if pred_all else set()
         abstain_set = set(pred_all["abstain"]) if pred_all else set()
 
@@ -147,6 +162,9 @@ def evaluate_run(
     return {
         "sample_count": total_samples,
         "predicted_samples": len(predictions),
+        "failed_samples": len(failed_samples),
+        "failed_sample_ids": sorted(failed_samples),
+        "failure_rate": round(_div(len(failed_samples), total_samples + len(failed_samples)), 4),
         "per_class": per_class,
         "macro": {"precision": round(macro_p, 4), "recall": round(macro_r, 4), "f1": round(macro_f1, 4)},
         "micro": {"precision": round(micro_p, 4), "recall": round(micro_r, 4), "f1": round(_f1(micro_p, micro_r), 4)},
@@ -194,14 +212,25 @@ def _mean(values: List[float]) -> float:
 
 def render_markdown(runs: List[Tuple[str, Path, Dict[str, Any]]]) -> str:
     lines = ["# 评测结果", "", "## 总体对比", ""]
-    lines.append("| 实验组 | 样本数 | Macro P | Macro R | Macro F1 | Micro F1 | 误报样本率 | 漏报样本率 | 弃权率 |")
-    lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
+    lines.append("| 实验组 | 有效样本 | Macro P | Macro R | Macro F1 | Micro F1 | 误报样本率 | 漏报样本率 | 弃权率 | 分析失败 |")
+    lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
     for name, _, m in runs:
+        failed = m.get("failed_samples", 0)
+        failed_txt = f"{failed} ({m.get('failure_rate', 0):.1%})" if failed else "0"
         lines.append(
             f"| {name} | {m['sample_count']} | {m['macro']['precision']:.3f} | {m['macro']['recall']:.3f} "
             f"| {m['macro']['f1']:.3f} | {m['micro']['f1']:.3f} | {m['false_positive_rate']:.3f} "
-            f"| {m['miss_rate']:.3f} | {m['abstain_rate']:.3f} |"
+            f"| {m['miss_rate']:.3f} | {m['abstain_rate']:.3f} | {failed_txt} |"
         )
+
+    if any(m.get("failed_samples") for _, _, m in runs):
+        lines.extend([
+            "",
+            "> **关于「分析失败」**：这些样本的模型调用彻底失败（如接口拒绝图片格式），",
+            "> 系统没有给出任何结论。它们**不计入**精确率/召回率/误报/漏报 ——",
+            "> 把失败当成「没发现风险」会把漏报率算低，当成「正常」更是错的。",
+            "> 每组的失败样本编号见 `comparison.json` 的 `failed_sample_ids`。",
+        ])
 
     if any(m.get("cost") for _, _, m in runs):
         lines.extend(["", "## 处理成本对比", ""])

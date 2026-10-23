@@ -141,10 +141,12 @@ class PerceptionAgent:
         images: List[Path] = [image_path]
         tool_calls: List[Dict[str, Any]] = []
 
+        failure = ""
         try:
             result = self.llm.analyze_images(prompt, images, task="perception")
         except Exception as err:  # noqa: BLE001
             result = {"scene_description": f"感知失败：{err}", "findings": [], "tool_requests": []}
+            failure = f"感知调用失败：{err}"
 
         rounds = 0
         max_rounds = self.registry.max_rounds if self.registry else 0
@@ -164,21 +166,28 @@ class PerceptionAgent:
                 )
             except Exception as err:  # noqa: BLE001
                 result = {"scene_description": f"感知失败：{err}", "findings": [], "tool_requests": []}
+                failure = f"感知工具循环调用失败：{err}"
                 break
 
         findings = result.get("findings") or []
         conflicts = []
         if not findings:
             conflicts.append("未提出任何候选风险（可能画面正常，也可能模型未识别到）")
+        if failure:
+            # 调用失败必须显式记录：否则「没输出风险」会被下游误当成「场景安全」，
+            # 漏报率被系统性低估 —— 这是实测踩到过的坑。
+            conflicts.append(failure)
 
         trace = AgentTrace(
             agent=self.name,
             input_summary=f"图片 {image_path.name}；场景 {scenario}",
-            output_summary=f"场景描述完成，提出候选风险 {len(findings)} 个"
-                           + (f"，自主工具调用 {len(tool_calls)} 次" if tool_calls else "，未申请工具"),
+            output_summary=("感知步骤失败，本帧结果不可用" if failure else
+                            f"场景描述完成，提出候选风险 {len(findings)} 个"
+                            + (f"，自主工具调用 {len(tool_calls)} 次" if tool_calls else "，未申请工具")),
             tool_calls=tool_calls,
             conflicts=conflicts,
             duration_ms=int((time.time() - started) * 1000),
+            error=failure,
         )
         for item in findings:
             item.setdefault("source_image", image_path.name)
@@ -527,9 +536,11 @@ class BaselineAnalyzer:
         trace = AgentTrace(
             agent=self.name,
             input_summary=f"图片 {image_path.name}；场景 {scenario}",
-            output_summary=f"单次调用直接输出风险 {len(findings)} 个（无规则、无复核、无工具）",
+            output_summary=("基础系统调用失败，本帧结果不可用" if note else
+                            f"单次调用直接输出风险 {len(findings)} 个（无规则、无复核、无工具）"),
             conflicts=[note] if note else [],
             duration_ms=int((time.time() - started) * 1000),
+            error=note,
         )
         return findings, trace
 

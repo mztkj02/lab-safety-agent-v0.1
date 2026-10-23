@@ -92,6 +92,11 @@ class SafetyAnalysisPipeline:
         merged = self._temporal_fuse(frame_results, total_frames)
         conflicts = self._collect_conflicts(merged)
 
+        # 收集失败轨迹：一帧彻底没跑成，就不能把「无风险」当成结论
+        analysis_errors = [
+            f"{t.agent}：{t.error}" for t in traces if getattr(t, "error", "")
+        ]
+
         report = AnalysisReport(
             sample_id=sample_id,
             input_path=str(input_path),
@@ -113,6 +118,7 @@ class SafetyAnalysisPipeline:
             model_calls=int(getattr(self.llm, "calls", 0)) - calls_before,
             tool_calls=len(self.tool_logger.calls) - tools_before,
             conflicts=conflicts,
+            analysis_errors=analysis_errors,
         )
         self._save_report(report, output_dir)
         self.tool_logger.record(

@@ -1,0 +1,317 @@
+{
+  "基础识别系统（单模型直出）": {
+    "sample_count": 43,
+    "predicted_samples": 43,
+    "failed_samples": 0,
+    "failed_sample_ids": [],
+    "failure_rate": 0.0,
+    "per_class": [
+      {
+        "risk_type": "flammable_near_heat",
+        "precision": 0.4286,
+        "recall": 1.0,
+        "f1": 0.6,
+        "support": 3,
+        "tp": 3,
+        "fp": 4,
+        "fn": 0
+      },
+      {
+        "risk_type": "food_or_drink",
+        "precision": 0.4286,
+        "recall": 1.0,
+        "f1": 0.6,
+        "support": 3,
+        "tp": 3,
+        "fp": 4,
+        "fn": 0
+      },
+      {
+        "risk_type": "ppe_missing",
+        "precision": 0.5,
+        "recall": 0.25,
+        "f1": 0.3333,
+        "support": 4,
+        "tp": 1,
+        "fp": 1,
+        "fn": 3
+      },
+      {
+        "risk_type": "reagent_management",
+        "precision": 0.25,
+        "recall": 0.6667,
+        "f1": 0.3636,
+        "support": 3,
+        "tp": 2,
+        "fp": 6,
+        "fn": 1
+      },
+      {
+        "risk_type": "spill_or_obstruction",
+        "precision": 0.3333,
+        "recall": 1.0,
+        "f1": 0.5,
+        "support": 4,
+        "tp": 4,
+        "fp": 8,
+        "fn": 0
+      }
+    ],
+    "macro": {
+      "precision": 0.3881,
+      "recall": 0.7833,
+      "f1": 0.4794
+    },
+    "micro": {
+      "precision": 0.3611,
+      "recall": 0.7647,
+      "f1": 0.4906
+    },
+    "totals": {
+      "tp": 13,
+      "fp": 23,
+      "fn": 4
+    },
+    "false_positive_samples": 16,
+    "missed_samples": 4,
+    "false_positive_rate": 0.3721,
+    "miss_rate": 0.093,
+    "abstain_samples": 0,
+    "abstain_rate": 0.0,
+    "confusions": [
+      {
+        "pair": "ppe_missing -> reagent_management",
+        "count": 2
+      },
+      {
+        "pair": "ppe_missing -> flammable_near_heat",
+        "count": 1
+      },
+      {
+        "pair": "ppe_missing -> spill_or_obstruction",
+        "count": 1
+      },
+      {
+        "pair": "ppe_missing -> food_or_drink",
+        "count": 1
+      },
+      {
+        "pair": "reagent_management -> food_or_drink",
+        "count": 1
+      }
+    ],
+    "cost": {
+      "avg_duration_ms": 4865.0,
+      "avg_model_calls": 1.0,
+      "avg_tool_calls": 0.0,
+      "total_model_calls": 43,
+      "total_tool_calls": 0
+    }
+  },
+  "多 Agent + 工具调用": {
+    "sample_count": 43,
+    "predicted_samples": 43,
+    "failed_samples": 0,
+    "failed_sample_ids": [],
+    "failure_rate": 0.0,
+    "per_class": [
+      {
+        "risk_type": "flammable_near_heat",
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.8571,
+        "support": 3,
+        "tp": 3,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "risk_type": "food_or_drink",
+        "precision": 0.6667,
+        "recall": 0.6667,
+        "f1": 0.6667,
+        "support": 3,
+        "tp": 2,
+        "fp": 1,
+        "fn": 1
+      },
+      {
+        "risk_type": "ppe_missing",
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4
+      },
+      {
+        "risk_type": "reagent_management",
+        "precision": 0.5,
+        "recall": 0.3333,
+        "f1": 0.4,
+        "support": 3,
+        "tp": 1,
+        "fp": 1,
+        "fn": 2
+      },
+      {
+        "risk_type": "spill_or_obstruction",
+        "precision": 0.75,
+        "recall": 0.75,
+        "f1": 0.75,
+        "support": 4,
+        "tp": 3,
+        "fp": 1,
+        "fn": 1
+      }
+    ],
+    "macro": {
+      "precision": 0.5333,
+      "recall": 0.55,
+      "f1": 0.5348
+    },
+    "micro": {
+      "precision": 0.6923,
+      "recall": 0.5294,
+      "f1": 0.6
+    },
+    "totals": {
+      "tp": 9,
+      "fp": 4,
+      "fn": 8
+    },
+    "false_positive_samples": 4,
+    "missed_samples": 8,
+    "false_positive_rate": 0.093,
+    "miss_rate": 0.186,
+    "abstain_samples": 2,
+    "abstain_rate": 0.0465,
+    "confusions": [
+      {
+        "pair": "ppe_missing -> flammable_near_heat",
+        "count": 1
+      },
+      {
+        "pair": "ppe_missing -> reagent_management",
+        "count": 1
+      },
+      {
+        "pair": "reagent_management -> food_or_drink",
+        "count": 1
+      }
+    ],
+    "cost": {
+      "avg_duration_ms": 6971.7,
+      "avg_model_calls": 1.98,
+      "avg_tool_calls": 1.0,
+      "total_model_calls": 85,
+      "total_tool_calls": 43
+    }
+  },
+  "两轮自进化后": {
+    "sample_count": 43,
+    "predicted_samples": 43,
+    "failed_samples": 0,
+    "failed_sample_ids": [],
+    "failure_rate": 0.0,
+    "per_class": [
+      {
+        "risk_type": "flammable_near_heat",
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.8571,
+        "support": 3,
+        "tp": 3,
+        "fp": 1,
+        "fn": 0
+      },
+      {
+        "risk_type": "food_or_drink",
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75,
+        "support": 3,
+        "tp": 3,
+        "fp": 2,
+        "fn": 0
+      },
+      {
+        "risk_type": "ppe_missing",
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 4,
+        "tp": 0,
+        "fp": 0,
+        "fn": 4
+      },
+      {
+        "risk_type": "reagent_management",
+        "precision": 0.3333,
+        "recall": 0.3333,
+        "f1": 0.3333,
+        "support": 3,
+        "tp": 1,
+        "fp": 2,
+        "fn": 2
+      },
+      {
+        "risk_type": "spill_or_obstruction",
+        "precision": 0.25,
+        "recall": 0.25,
+        "f1": 0.25,
+        "support": 4,
+        "tp": 1,
+        "fp": 3,
+        "fn": 3
+      }
+    ],
+    "macro": {
+      "precision": 0.3867,
+      "recall": 0.5167,
+      "f1": 0.4381
+    },
+    "micro": {
+      "precision": 0.5,
+      "recall": 0.4706,
+      "f1": 0.4848
+    },
+    "totals": {
+      "tp": 8,
+      "fp": 8,
+      "fn": 9
+    },
+    "false_positive_samples": 8,
+    "missed_samples": 9,
+    "false_positive_rate": 0.186,
+    "miss_rate": 0.2093,
+    "abstain_samples": 1,
+    "abstain_rate": 0.0233,
+    "confusions": [
+      {
+        "pair": "ppe_missing -> flammable_near_heat",
+        "count": 1
+      },
+      {
+        "pair": "ppe_missing -> reagent_management",
+        "count": 1
+      },
+      {
+        "pair": "ppe_missing -> food_or_drink",
+        "count": 1
+      },
+      {
+        "pair": "reagent_management -> food_or_drink",
+        "count": 1
+      }
+    ],
+    "cost": {
+      "avg_duration_ms": 11652.3,
+      "avg_model_calls": 2.63,
+      "avg_tool_calls": 1.0,
+      "total_model_calls": 113,
+      "total_tool_calls": 43
+    }
+  }
+}

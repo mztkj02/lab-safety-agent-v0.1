@@ -1,0 +1,218 @@
+{
+  "version": "v0.4",
+  "scenario": "chemistry_lab",
+  "risk_types": [
+    "ppe_missing",
+    "reagent_management",
+    "flammable_near_heat",
+    "food_or_drink",
+    "spill_or_obstruction"
+  ],
+  "ablation": {
+    "use_rules": true,
+    "use_memory": true,
+    "use_review_agent": true,
+    "use_agent_tools": true
+  },
+  "agents": {
+    "perception": {
+      "use_llm": true
+    },
+    "analysis": {
+      "use_llm": true
+    },
+    "review": {
+      "use_llm": true
+    }
+  },
+  "review": {
+    "min_confidence": 0.45,
+    "min_evidence_len": 8
+  },
+  "risk_type_notes": {
+    "food_or_drink": "当检测到食物或饮料时，应考虑是否为正常操作，例如餐饮区内的活动。",
+    "spill_or_obstruction": "当检测到液体溢出或障碍物时，应考虑是否为正常清洁或维护工作。",
+    "ppe_missing": "当检测到人员未佩戴个人防护装备时，应立即报警并通知相关人员采取紧急措施。",
+    "spill_or_obstruction↔normal": "已有 2 次把「spill_or_obstruction」误报为风险（实际正常）。依据：开发集标注为正常场景，系统却报了风险，属于误报 证据不足时应输出 uncertain 而不是硬报风险。",
+    "food_or_drink↔normal": "已有 1 次把「food_or_drink」误报为风险（实际正常）。依据：开发集标注为正常场景，系统却报了风险，属于误报 证据不足时应输出 uncertain 而不是硬报风险。",
+    "food_or_drink↔ppe_missing": "已有 1 次把「food_or_drink」误判为「ppe_missing」，二者需明确区分。依据：开发集标注的真实风险与系统输出不一致，需要修正",
+    "reagent_management↔normal": "已有 1 次把「reagent_management」误报为风险（实际正常）。依据：开发集标注为正常场景，系统却报了风险，属于误报 证据不足时应输出 uncertain 而不是硬报风险。",
+    "reagent_management↔flammable_near_heat": "已有 1 次把「reagent_management」误判为「flammable_near_heat」，二者需明确区分。依据：开发集标注的真实风险与系统输出不一致，需要修正",
+    "food_or_drink↔reagent_management": "已有 1 次把「food_or_drink」误判为「reagent_management」，二者需明确区分。依据：开发集标注的真实风险与系统输出不一致，需要修正",
+    "spill_or_obstruction↔reagent_management": "已有 1 次把「spill_or_obstruction」误判为「reagent_management」，二者需明确区分。依据：开发集标注的真实风险与系统输出不一致，需要修正"
+  },
+  "prompts": {
+    "perception": "你是高校实验室安全场景感知 Agent。请分析输入图像，场景为 {scenario}。\n\n任务：\n1. 用 2~3 句话客观描述画面中的人、设备、试剂与台面状态，不要下结论。\n2. 提出候选风险，每个候选风险必须有画面中真实可见的证据支撑。\n\n约束：\n- 只允许输出 JSON，不要输出任何解释性文字。\n- risk_type 必须从以下类型中选择：{risk_types}。\n- severity 只能是 low、medium、high、uncertain。\n- evidence 必须具体到可见物体及其位置，禁止写“可能存在”“疑似”这类无信息量的表述。\n- 同一 risk_type 只输出一次，选最严重的那一处。\n- 证据不足时，severity 填 uncertain，并在 uncertainty 中说明为什么判断不了（例如被遮挡、分辨率不足、超出画面）。\n- 不要为了凑数而报警：画面正常时应返回空的 findings 数组。\n\n输出格式：\n{\n  \"scene_description\": \"...\",\n  \"findings\": [\n    {\n      \"risk_type\": \"...\",\n      \"severity\": \"low|medium|high|uncertain\",\n      \"evidence\": \"...\",\n      \"location\": \"...\",\n      \"time_range\": \"unknown\",\n      \"confidence\": 0.0,\n      \"uncertainty\": \"...\"\n    }\n  ]\n}\n\n【策略进化补充要求 v0.4】\n- 逐条检查历史纠错中出现的易混淆说明，避免重复同类误判。\n- 画面存在遮挡、模糊、角度受限时，必须输出 severity=uncertain 并说明原因。\n- 证据描述必须具体到可见物体与位置，禁止使用“可能存在”这类无信息量的表述。",
+    "analysis": "你是实验室安全风险分析 Agent。请结合给定的安全规则与历史纠错案例，为每个候选风险做出定级判断。\n\n风险等级定义：\n{risk_levels}\n\n要求：\n- 有明确规则支持时，等级应与规则一致；如果画面证据比一般情况更严重或更轻微，可以调整，但必须在 reasoning 中说明理由。\n- recommendation 要具体可执行，写清“先做什么、再做什么”。\n- 历史纠错案例代表人工已确认的判定先例，出现同类情形时应优先向案例结论靠拢。\n- 规则库中没有对应规则时，severity 必须给 uncertain，不能凭常识硬编。\n\n只输出 JSON：\n{\n  \"results\": [\n    {\n      \"index\": 0,\n      \"severity\": \"low|medium|high|uncertain\",\n      \"recommendation\": \"...\",\n      \"confidence\": 0.0,\n      \"uncertainty\": \"...\",\n      \"reasoning\": \"...\"\n    }\n  ]\n}",
+    "review": "你是实验室安全的证据复核 Agent，立场是“质疑者”：你的职责是压低误报，而不是附和前面的结论。\n\n对每一条待复核结论，判断画面证据是否真的支持它：\n- confirmed：证据明确、具体、可指认，且与风险类型直接对应。\n- uncertain：证据被遮挡、模糊、角度受限，或结论依赖推测。\n- rejected：结论与画面明显不符（典型误报，例如把水杯当成未戴护目镜）。\n\n额外要求：\n- 若 evidence 描述模糊（如“可能存在风险”“疑似不规范”），一律记 uncertain。\n- 若 confidence 低于 0.45，除非证据极其明确，否则记 uncertain。\n- 若同一 risk_type 的多个候选互相矛盾，保留证据最强的一条，其余记 rejected。\n\n只输出 JSON：\n{\n  \"results\": [\n    {\n      \"index\": 0,\n      \"verdict\": \"confirmed|uncertain|rejected\",\n      \"severity\": \"low|medium|high|uncertain\",\n      \"reason\": \"...\"\n    }\n  ]\n}",
+    "baseline": "分析这张高校实验室照片，找出其中的安全风险。场景为 {scenario}。risk_type 只能从以下类型中选择：{risk_types}。只输出 JSON，格式：{\"scene_description\": \"...\", \"findings\": [{\"risk_type\": \"...\", \"severity\": \"low|medium|high\", \"evidence\": \"...\", \"location\": \"...\", \"recommendation\": \"...\"}]}"
+  },
+  "change_log": [
+    {
+      "time": "2026-10-15",
+      "from": "none",
+      "to": "v0.1",
+      "proposal": "初版策略：定义 5 类实验室风险，要求输出证据与不确定性。",
+      "changes": [
+        "建立 5 类风险本体",
+        "建立感知提示词"
+      ],
+      "status": "superseded"
+    },
+    {
+      "time": "2026-10-16",
+      "from": "v0.1",
+      "to": "v0.2",
+      "proposal": "工程化重构：三个 Agent 全部接入大模型推理；新增消融开关与误报复核立场；模拟模式结果强制标记为 simulated，不再冒充真实结论。",
+      "changes": [
+        "感知提示词补强：禁止无信息量表述、要求正常画面返回空数组",
+        "新增风险分析提示词：要求必须引用规则与案例依据",
+        "新增证据复核提示词：明确质疑者立场与 rejected 判定",
+        "新增 ablation 开关，支持关闭规则检索 / 案例记忆 / 复核 Agent",
+        "复核阈值由 0.35 提高到 0.45",
+        "新增 baseline 提示词，用于基础对照系统",
+        "新增 use_agent_tools 消融开关"
+      ],
+      "status": "active"
+    },
+    {
+      "time": "2026-10-23 16:15:05",
+      "from": "v0.2",
+      "to": "v0.3",
+      "proposal": "第 1 轮自进化：修正开发集上暴露的误报与漏报",
+      "proposal_source": "llm_agent",
+      "diagnosis": "这批纠错显示系统在识别'food_or_drink'和'spill_or_obstruction'时出现了误判，将正常情况标记为风险，同时未能正确识别'ppe_missing'风险。",
+      "changes": [
+        "新增易混淆说明：food_or_drink",
+        "新增易混淆说明：spill_or_obstruction",
+        "新增易混淆说明：ppe_missing",
+        "更新感知提示词：写入本轮的补充要求",
+        "提出 2 条新规则，将在晋升时写入规则库",
+        "已把 2 条新规则写入规则库：R-001-01、R-002-01"
+      ],
+      "evidence": {
+        "total_cases": 10,
+        "confusion_pairs": [
+          {
+            "original": "food_or_drink",
+            "corrected": "normal",
+            "count": 1,
+            "latest_note": "开发集标注为正常场景，系统却报了风险，属于误报。"
+          },
+          {
+            "original": "spill_or_obstruction",
+            "corrected": "normal",
+            "count": 1,
+            "latest_note": "开发集标注为正常场景，系统却报了风险，属于误报。"
+          },
+          {
+            "original": "food_or_drink",
+            "corrected": "ppe_missing",
+            "count": 1,
+            "latest_note": "开发集标注的真实风险与系统输出不一致，需要修正。"
+          }
+        ],
+        "false_positive_count": 2
+      },
+      "status": "active"
+    },
+    {
+      "time": "2026-10-23 16:21:06",
+      "from": "v0.3",
+      "to": "v0.4",
+      "proposal": "第 2 轮自进化：修正开发集上暴露的误报与漏报",
+      "proposal_source": "rule_based_fallback（模型提案失败，已回退）",
+      "diagnosis": "累计 20 条纠错，其中误报 4 条、等级纠正 0 条，识别出 7 组重复误判模式。",
+      "changes": [
+        "新增易混淆说明：spill_or_obstruction↔normal",
+        "新增易混淆说明：food_or_drink↔normal",
+        "新增易混淆说明：food_or_drink↔ppe_missing",
+        "新增易混淆说明：reagent_management↔normal",
+        "新增易混淆说明：reagent_management↔flammable_near_heat",
+        "新增易混淆说明：food_or_drink↔reagent_management",
+        "新增易混淆说明：spill_or_obstruction↔reagent_management",
+        "更新感知提示词：写入本轮的补充要求"
+      ],
+      "evidence": {
+        "total_cases": 20,
+        "confusion_pairs": [
+          {
+            "original": "spill_or_obstruction",
+            "corrected": "normal",
+            "count": 2,
+            "latest_note": "开发集标注为正常场景，系统却报了风险，属于误报。"
+          },
+          {
+            "original": "food_or_drink",
+            "corrected": "normal",
+            "count": 1,
+            "latest_note": "开发集标注为正常场景，系统却报了风险，属于误报。"
+          },
+          {
+            "original": "food_or_drink",
+            "corrected": "ppe_missing",
+            "count": 1,
+            "latest_note": "开发集标注的真实风险与系统输出不一致，需要修正。"
+          },
+          {
+            "original": "reagent_management",
+            "corrected": "normal",
+            "count": 1,
+            "latest_note": "开发集标注为正常场景，系统却报了风险，属于误报。"
+          },
+          {
+            "original": "reagent_management",
+            "corrected": "flammable_near_heat",
+            "count": 1,
+            "latest_note": "开发集标注的真实风险与系统输出不一致，需要修正。"
+          },
+          {
+            "original": "food_or_drink",
+            "corrected": "reagent_management",
+            "count": 1,
+            "latest_note": "开发集标注的真实风险与系统输出不一致，需要修正。"
+          },
+          {
+            "original": "spill_or_obstruction",
+            "corrected": "reagent_management",
+            "count": 1,
+            "latest_note": "开发集标注的真实风险与系统输出不一致，需要修正。"
+          }
+        ],
+        "false_positive_count": 4
+      },
+      "status": "pending_human_confirmation"
+    }
+  ],
+  "proposed_rules": [
+    {
+      "rule_id": "R-001-01",
+      "risk_type": "food_or_drink",
+      "title": "食物/饮料检测误报规则",
+      "description": "在非餐饮区域检测到食物或饮料时，若无异常行为，则视为正常。",
+      "keywords": [
+        "食物",
+        "饮料",
+        "餐饮区",
+        "正常行为"
+      ],
+      "default_severity": "low",
+      "recommendation": "若无异常行为，忽略警报。",
+      "source": "待补充权威来源"
+    },
+    {
+      "rule_id": "R-002-01",
+      "risk_type": "spill_or_obstruction",
+      "title": "液体溢出/障碍物误报规则",
+      "description": "在清洁或维护过程中检测到的液体溢出或障碍物，若无安全隐患，则视为正常。",
+      "keywords": [
+        "清洁",
+        "维护",
+        "安全隐患"
+      ],
+      "default_severity": "low",
+      "recommendation": "若无安全隐患，忽略警报。",
+      "source": "待补充权威来源"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "total": 84,
+  "by_source": {
+    "pexels": 35,
+    "synthetic": 49
+  },
+  "confusable": 20,
+  "by_type": {
+    "flammable_near_heat": 6,
+    "food_or_drink": 6,
+    "normal": 51,
+    "ppe_missing": 8,
+    "reagent_management": 6,
+    "spill_or_obstruction": 7
+  },
+  "split_ratio": 0.5,
+  "seed": 20261023,
+  "license": "Pexels License（真实图）+ 项目自建（合成图）",
+  "caveat": "合成样本为文生图生成，非真实拍摄场景；报告中必须与实拍数据区分声明。"
+}
