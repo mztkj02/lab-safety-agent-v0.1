@@ -16,6 +16,8 @@ Thumbs.db
 # ---- 密钥：绝对不要提交 ----
 .env
 .env.*
+# 但配置模板必须入库，否则组员不知道要填哪些字段
+!.env.example
 *.key
 secrets.json
 

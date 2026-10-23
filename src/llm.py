@@ -23,6 +23,50 @@ from typing import Any, Dict, List, Optional
 
 JSON_BLOCK_RE = re.compile(r"```(?:json)?\s*(.*?)```", re.DOTALL)
 
+#: 项目根目录下的 .env（已在 .gitignore 中排除，不会进版本库）
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+
+
+def load_env_file(path: Path = ENV_FILE) -> int:
+    """从 .env 载入配置，返回载入的条目数。
+
+    只做最小实现，不引入 python-dotenv 依赖：
+    - 支持 `KEY=VALUE`、`export KEY=VALUE`、`#` 注释、空行
+    - 值可以用单/双引号包裹
+    - **已存在的环境变量优先，不会被文件覆盖**（便于临时用 export 覆盖）
+
+    这样 API Key 只写在本地文件里，既不进命令行历史，也不进版本库。
+    """
+    if not path.exists():
+        return 0
+    loaded = 0
+    try:
+        lines = path.read_text(encoding="utf-8-sig").splitlines()
+    except OSError:
+        return 0
+
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        if line.lower().startswith("export "):
+            line = line[7:].strip()
+        key, _, value = line.partition("=")
+        key = key.strip()
+        if not key or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key):
+            continue
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        if key not in os.environ:  # 环境变量优先
+            os.environ[key] = value
+            loaded += 1
+    return loaded
+
+
+# import 时即生效，保证任何入口（CLI / Web / 脚本）都能读到 .env
+load_env_file()
+
 
 def _balanced_objects(text: str) -> List[str]:
     """扫描出文本中所有括号配平的顶层 JSON 对象片段（按出现顺序）。"""
@@ -240,6 +284,11 @@ class OpenAICompatibleVisionLLM(BaseLLM):
         # 图片传参格式：data_uri（OpenAI 标准，"data:image/jpeg;base64,..."）
         # 或 base64（只给裸 base64 串）。智谱 GLM-4V 等国内接口有的只吃后者。
         self.image_format = (os.getenv("SAFETY_LLM_IMAGE_FORMAT") or "data_uri").strip().lower()
+        # 超时可从环境变量覆盖：视觉模型遇到大图（长视频帧）会明显变慢，
+        # 国内免费模型高峰期尤其明显，默认 120s 不设死。
+        env_timeout = os.getenv("SAFETY_LLM_TIMEOUT")
+        if env_timeout and str(env_timeout).strip().isdigit():
+            timeout = int(str(env_timeout).strip())
         self.timeout = timeout
         self.max_retries = max_retries
         if not self.api_key:
