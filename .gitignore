@@ -47,6 +47,14 @@ data/demo_labels_*.csv
 data/lab/
 .cache/
 
+# ---- 自拍素材与导入产物 ----
+# inbox 是手机的原始拷贝（含 GPS 等元数据，绝不能传）；raw 是归一化后的图。
+# 两者都可由 scripts/ingest_photos.py 重新生成。
+data/inbox/
+data/raw/
+data/labels_draft.csv
+data/ingest_report.json
+
 # ---- 实验输出 ----
 # 默认忽略（往往是占位数据跑出来的）。
 # 用真实数据跑出结果后，请显式加入：git add -f reports/experiments
