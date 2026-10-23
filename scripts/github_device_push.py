@@ -125,7 +125,21 @@ def push_with_token(token: str) -> bool:
 def main() -> None:
     parser = argparse.ArgumentParser(description="GitHub 设备授权后推送")
     parser.add_argument("--resume", action="store_true", help="复用上次的 device_code")
+    parser.add_argument("--token", default="",
+                        help="直接用 Personal Access Token 推送，跳过设备授权流程")
     args = parser.parse_args()
+
+    # 快捷通道：设备授权页打不开时（未登录会 302 到 /login），
+    # 直接用一个 repo 权限的 PAT 推送，token 只在这条命令里出现过一次。
+    if args.token:
+        print("使用 Personal Access Token 直接推送（跳过设备授权）")
+        ok = push_with_token(args.token.strip())
+        if ok:
+            print("推送完成。请到 GitHub 设置里删除这个 token，它已经出现在聊天记录里了。")
+        else:
+            print("推送失败，请检查 token 是否有效、是否有 repo 权限。")
+            sys.exit(1)
+        return
 
     if args.resume and DEVICE_FILE.exists():
         device = json.loads(DEVICE_FILE.read_text(encoding="utf-8"))
