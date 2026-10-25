@@ -8,7 +8,7 @@
 - 多组结果横向对比（基础版 / 多 Agent 版 / 自进化版 / 消融实验）
 
 用法：
-    python src/evaluate.py --labels data/labels_test.csv --reports reports/run_base reports/run_multi \
+    python src/evaluate.py --labels data/web_labels_test.csv --reports reports/run_base reports/run_multi \
         --names 基础版 多Agent版 --out-md reports/eval.md
 """
 
@@ -309,7 +309,7 @@ def render_console(runs: List[Tuple[str, Path, Dict[str, Any]]]) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="评测风险识别结果（支持多标签与多组对比）")
-    parser.add_argument("--labels", required=True, help="标注 CSV，例如 data/labels_test.csv")
+    parser.add_argument("--labels", required=True, help="标注 CSV，例如 data/web_labels_test.csv")
     parser.add_argument("--reports", required=True, nargs="+", help="一个或多个报告目录")
     parser.add_argument("--names", default=None, help="与 --reports 对应的实验组名称，逗号分隔")
     parser.add_argument("--out-json", default=None, help="把完整指标写入 JSON")

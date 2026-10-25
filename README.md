@@ -19,7 +19,7 @@ python scripts/bootstrap.py
 ```
 
 `bootstrap.py` 会自动完成：检查 Python 版本 → 建 `.venv` → 装依赖 →
-从 `.env.example` 复制出 `.env` → 跑 55 项单元测试 → 打印环境状态。
+从 `.env.example` 复制出 `.env` → 跑全部单元测试 → 打印环境状态。
 
 > **数据集已经随仓库提供**（35 张真实实验室照片 + 49 张合成样本 + 3 段演示视频，
 > 加上 `data/web_labels_dev.csv` / `data/web_labels_test.csv` 人工标注），
@@ -278,7 +278,7 @@ python scripts/run_experiment.py --labels data/web_labels_test.csv --groups base
 单独评测：
 
 ```bash
-python src/main.py evaluate --labels data/labels_test.csv \
+python src/main.py evaluate --labels data/web_labels_test.csv \
   --reports reports/experiments/base reports/experiments/multi reports/experiments/evolved \
   --names 基础系统 多Agent版 两轮自进化版 \
   --out-md reports/eval.md --out-json reports/eval.json

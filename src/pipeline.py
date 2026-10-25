@@ -1,6 +1,7 @@
 """分析主流程：输入 -> 预处理 -> 多 Agent 协作（含自主工具调用）-> 时间融合 -> 报告落盘。"""
 
 import json
+import os
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -51,7 +52,12 @@ class SafetyAnalysisPipeline:
             "use_agent_tools": bool(flags.get("use_agent_tools", True)),
         }
 
-        self.tool_logger = ToolLogger(project_root / "reports" / "tool_calls.jsonl")
+        # 工具调用日志默认写 reports/tool_calls.jsonl；
+        # 可用 SAFETY_TOOL_LOG 覆盖，方便测试跑在临时目录、不弄脏仓库。
+        tool_log_path = os.environ.get("SAFETY_TOOL_LOG")
+        self.tool_logger = ToolLogger(
+            Path(tool_log_path) if tool_log_path else project_root / "reports" / "tool_calls.jsonl"
+        )
         self.rules = SafetyRuleRetriever(project_root / "rules" / "lab_safety_rules.json")
         self.memory = CaseMemory(project_root / "memory" / "cases.json")
 

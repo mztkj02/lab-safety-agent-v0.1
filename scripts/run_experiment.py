@@ -5,10 +5,14 @@
 
 用法：
     # 只跑前两组
-    python scripts/run_experiment.py --labels data/demo_labels_test.csv --groups base,multi
+    python scripts/run_experiment.py --groups base,multi
 
     # 完整三组：先在开发集上完成两轮自进化，再在测试集上评第三组
-    python scripts/run_experiment.py --labels data/demo_labels_test.csv --auto-evolve --rounds 2
+    python scripts/run_experiment.py --groups base,multi,evolved --auto-evolve --rounds 2
+
+    # 标注文件换位置了也可以显式指定
+    python scripts/run_experiment.py --labels data/web_labels_test.csv \
+        --dev-labels data/web_labels_dev.csv
 
 注意：
 - 自进化只使用开发集（--dev-labels），测试集绝不参与策略更新或案例记忆，符合课程要求。
@@ -187,8 +191,8 @@ def _case(sample_id: str, report: Dict, original: str, corrected: str, note: str
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="三组对比实验（基础 / 多 Agent / 两轮自进化）")
-    parser.add_argument("--labels", default="data/demo_labels_test.csv", help="测试集标注 CSV")
-    parser.add_argument("--dev-labels", default="data/demo_labels_dev.csv", help="开发集标注 CSV（自进化用）")
+    parser.add_argument("--labels", default="data/web_labels_test.csv", help="测试集标注 CSV")
+    parser.add_argument("--dev-labels", default="data/web_labels_dev.csv", help="开发集标注 CSV（自进化用）")
     parser.add_argument("--groups", default="base,multi", help="要跑的组：base,multi,evolved")
     parser.add_argument("--auto-evolve", action="store_true", help="自动完成两轮自进化后再评 evolved 组")
     parser.add_argument("--rounds", type=int, default=2, help="自进化轮数")

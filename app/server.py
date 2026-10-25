@@ -31,6 +31,18 @@ from self_evolution import (  # noqa: E402
 
 ALLOWED_SUFFIXES = IMAGE_SUFFIXES | VIDEO_SUFFIXES
 
+#: 评测标注文件的候选名，按优先级排列。数据集重命名后保留旧名兼容。
+LABEL_FILE_CANDIDATES = ("web_labels_test.csv", "labels_test.csv", "demo_labels_test.csv")
+
+
+def resolve_labels_path(project_root: Path) -> Path | None:
+    """在 data/ 下按优先级查找测试集标注文件，找不到返回 None。"""
+    for name in LABEL_FILE_CANDIDATES:
+        candidate = project_root / "data" / name
+        if candidate.exists():
+            return candidate
+    return None
+
 
 def create_app(project_root: Path | None = None) -> Flask:
     project_root = Path(project_root or PROJECT_ROOT_DEFAULT).resolve()
@@ -196,9 +208,13 @@ def create_app(project_root: Path | None = None) -> Flask:
     @app.get("/api/compare")
     def api_compare():
         """把 reports/sessions 下所有结果汇总成一次评测，用于消融对比。"""
-        labels_path = project_root / "data" / "labels_test.csv"
-        if not labels_path.exists():
-            return jsonify({"ok": False, "error": "缺少 data/labels_test.csv，无法评测"}), 400
+        labels_path = resolve_labels_path(project_root)
+        if labels_path is None:
+            return jsonify({
+                "ok": False,
+                "error": "找不到测试集标注文件，已尝试 data/"
+                         + "、data/".join(LABEL_FILE_CANDIDATES),
+            }), 400
         labels = load_labels(labels_path)
         predictions = load_predictions(sessions_dir)
         return jsonify({"ok": True, "metrics": evaluate_run(labels, predictions, load_costs(sessions_dir))})

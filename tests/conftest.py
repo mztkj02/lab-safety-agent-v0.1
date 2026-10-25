@@ -14,3 +14,13 @@ import pytest  # noqa: E402
 @pytest.fixture()
 def project_root() -> Path:
     return PROJECT_ROOT
+
+
+@pytest.fixture(autouse=True)
+def isolate_tool_log(tmp_path, monkeypatch):
+    """把测试期间的工具调用日志重定向到临时目录。
+
+    否则每跑一次 pytest，仓库里的 reports/tool_calls.jsonl 就会多出一堆
+    mock 条目，`git status` 永远是脏的，提交上去的实验日志也失去意义。
+    """
+    monkeypatch.setenv("SAFETY_TOOL_LOG", str(tmp_path / "tool_calls.jsonl"))
