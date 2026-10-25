@@ -9,57 +9,110 @@
 
 ## 一、5 分钟跑起来
 
+### 1. 克隆并初始化（一条命令）
+
 ```bash
-cd <项目目录>
+git clone https://github.com/mztkj02/lab-safety-agent-v0.1.git
+cd lab-safety-agent-v0.1
 
-# 0. 建虚拟环境（只需一次）
-python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements.txt   # Windows
-# source .venv/bin/activate && pip install -r requirements.txt  # macOS / Linux
-
-# 1. 看看当前环境（会告诉你有没有配置 API Key）
-python src/main.py status
-
-# 2. 用模拟模式分析一张图（无需任何 API Key 和第三方库）
-python src/main.py analyze --input data/dev/ppe_example.jpg --scenario chemistry_lab --mock
-
-# 报告在 reports/ppe_example_report.md 和 .json
+python scripts/bootstrap.py
 ```
 
-启动可操作的 Web 界面（需要 `pip install flask`）：
+`bootstrap.py` 会自动完成：检查 Python 版本 → 建 `.venv` → 装依赖 →
+从 `.env.example` 复制出 `.env` → 跑 55 项单元测试 → 打印环境状态。
+
+> **数据集已经随仓库提供**（35 张真实实验室照片 + 49 张合成样本 + 3 段演示视频，
+> 加上 `data/web_labels_dev.csv` / `data/web_labels_test.csv` 人工标注），
+> **不需要重新采集**。开箱可复现报告里的每一个数字。
+
+### 2. 填上你自己的 API Key
+
+打开生成出来的 `.env`，填这一行：
+
+```
+SAFETY_LLM_API_KEY=你的Key
+```
+
+Key 申请地址（智谱，`glm-4v-flash` 永久免费）：
+https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys
+
+> **每人用自己的 Key**。免费模型并发只有 1~2，多人共用一个会互相 429。
+> `.env` 已在 `.gitignore` 里，不会被提交。
+> 不填 Key 也能跑，系统会降级为模拟模式，结论全部标记 `simulated`。
+
+### 3. 验证
 
 ```bash
-python src/main.py serve --port 8000
+# Windows（PowerShell / CMD）
+.venv\Scripts\python.exe src\main.py status
+
+# macOS / Linux
+.venv/bin/python src/main.py status
+```
+
+看到 `模型模式：api` 和 `API Key：已配置` 就成功了。
+
+### 4. 分析一张图
+
+```bash
+.venv\Scripts\python.exe src\main.py analyze --input data\synth\synth_flammable_near_heat_01.jpg
+```
+
+报告会写到 `reports/synth_flammable_near_heat_01_report.md` 和 `.json`，
+里面包含风险类别、等级、可见证据、处理建议、Agent 执行轨迹与冲突仲裁记录。
+
+**不想花 API 额度**时加 `--mock`，用模拟数据跑通全流程：
+
+```bash
+.venv\Scripts\python.exe src\main.py analyze --input data\dev\ppe_example.jpg --mock
+```
+
+### 5. 打开可操作的 Web 界面
+
+```bash
+.venv\Scripts\python.exe src\main.py serve --port 8000
 # 浏览器打开 http://127.0.0.1:8000
 ```
 
-直接双击打开 `ui/index.html` 也能用：检测不到后端时会自动进入**离线演示模式**，
-用内置示例展示完整界面流程（数据是示例数据，会明确标注）。
+界面里能上传图片/视频、看到三个 Agent 的执行过程和意见冲突、导出报告。
+
+> 直接双击 `ui/index.html` 也能打开：检测不到后端时自动进入**离线演示模式**，
+> 用内置示例展示完整界面流程（数据是示例数据，界面会明确标注）。
+
+### 常见问题
+
+| 现象 | 原因与处理 |
+| --- | --- |
+| `ModuleNotFoundError: PIL` / `cv2` | 用了系统 Python。必须用 `.venv\Scripts\python.exe`，或先激活虚拟环境 |
+| `401` / `403` | Key 错了或过期，去控制台重新生成 |
+| 连续 `429` | 免费模型并发限制，脚本已带退避重试；把 `--sleep` 调大即可 |
+| `git push` 连不上 | 本仓库固定走 `127.0.0.1:7897` 代理，需先启动 Clash Verge |
+
+---
 
 ## 二、接入真实多模态模型
 
-系统对接任意 **OpenAI 兼容**的视觉模型接口。
+系统对接任意 **OpenAI 兼容**的视觉模型接口，配置写在 `.env`（推荐）或环境变量中，
+**环境变量优先**。
 
-Windows PowerShell：
+`.env` 示例（智谱，国内直连、模型免费）：
 
-```powershell
-$env:SAFETY_LLM_API_KEY  = "你的 API Key"
-$env:SAFETY_LLM_BASE_URL = "https://你的服务地址/v1"
-$env:SAFETY_LLM_MODEL    = "你的视觉模型名"
+```ini
+SAFETY_LLM_API_KEY=你的Key
+SAFETY_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+SAFETY_LLM_MODEL=glm-4v-flash
+SAFETY_LLM_IMAGE_FORMAT=base64
 ```
 
-macOS / Linux：
+> **`SAFETY_LLM_IMAGE_FORMAT` 是关键开关**：智谱只接受裸 base64，不能带 `data:` 前缀；
+> OpenAI / 通义等平台用 `data_uri`。填错会直接 400。
+> 详见 `docs/模型接入说明.md`。
+
+换平台只改这三行：`BASE_URL`、`MODEL`、`IMAGE_FORMAT`。
 
 ```bash
-export SAFETY_LLM_API_KEY="你的 API Key"
-export SAFETY_LLM_BASE_URL="https://你的服务地址/v1"
-export SAFETY_LLM_MODEL="你的视觉模型名"
-```
-
-然后照常运行命令即可，系统会自动从模拟模式切到真实模式：
-
-```bash
-python src/main.py analyze --input data/test/lab_0001.jpg
+# 单独验证模型是否通（不跑整个流水线，隔离排查配置问题）
+.venv\Scripts\python.exe scripts\probe_llm.py data\synth\synth_ppe_missing_01.jpg
 ```
 
 > 未配置 Key 时系统**自动降级为模拟模式**，并把所有结论标记为 `simulated`，
@@ -81,11 +134,11 @@ python src/main.py analyze --input data/test/lab_0001.jpg
 `analyze` 的消融开关（用于课程要求的“关闭一项关键功能进行对比”）：
 
 ```bash
-python src/main.py analyze --input data/test/x.jpg --no-review         # 关闭证据复核 Agent
-python src/main.py analyze --input data/test/x.jpg --no-rules          # 关闭规则检索
-python src/main.py analyze --input data/test/x.jpg --no-memory         # 关闭案例记忆
-python src/main.py analyze --input data/test/x.jpg --no-agent-tools    # 关闭 Agent 自主工具调用
-python src/main.py analyze --input data/test/x.jpg --mode baseline     # 基础对照系统（单模型直出）
+python src/main.py analyze --input data/synth/synth_flammable_near_heat_01.jpg --no-review         # 关闭证据复核 Agent
+python src/main.py analyze --input data/synth/synth_flammable_near_heat_01.jpg --no-rules          # 关闭规则检索
+python src/main.py analyze --input data/synth/synth_flammable_near_heat_01.jpg --no-memory         # 关闭案例记忆
+python src/main.py analyze --input data/synth/synth_flammable_near_heat_01.jpg --no-agent-tools    # 关闭 Agent 自主工具调用
+python src/main.py analyze --input data/synth/synth_flammable_near_heat_01.jpg --mode baseline     # 基础对照系统（单模型直出）
 ```
 
 ## 四、系统架构
@@ -213,7 +266,7 @@ python scripts/run_experiment.py \
 
 ```bash
 python scripts/make_demo_dataset.py --count 80 --video
-python scripts/run_experiment.py --labels data/demo_labels_test.csv --groups base,multi
+python scripts/run_experiment.py --labels data/web_labels_test.csv --groups base,multi
 ```
 
 输出：`reports/experiments/comparison.md`（含精确率、召回率、误报漏报、处理时间、调用成本）

@@ -1,5 +1,5 @@
 {
-  "基础识别系统（单模型直出）": {
+  "基础系统": {
     "sample_count": 43,
     "predicted_samples": 43,
     "failed_samples": 0,
@@ -8,73 +8,73 @@
     "per_class": [
       {
         "risk_type": "flammable_near_heat",
-        "precision": 0.4286,
+        "precision": 0.1875,
         "recall": 1.0,
-        "f1": 0.6,
+        "f1": 0.3158,
         "support": 3,
         "tp": 3,
-        "fp": 4,
+        "fp": 13,
         "fn": 0
       },
       {
         "risk_type": "food_or_drink",
-        "precision": 0.4286,
+        "precision": 0.25,
         "recall": 1.0,
-        "f1": 0.6,
+        "f1": 0.4,
         "support": 3,
         "tp": 3,
-        "fp": 4,
+        "fp": 9,
         "fn": 0
       },
       {
         "risk_type": "ppe_missing",
-        "precision": 0.5,
-        "recall": 0.25,
-        "f1": 0.3333,
-        "support": 4,
-        "tp": 1,
-        "fp": 1,
+        "precision": 0.1538,
+        "recall": 0.4,
+        "f1": 0.2222,
+        "support": 5,
+        "tp": 2,
+        "fp": 11,
         "fn": 3
       },
       {
         "risk_type": "reagent_management",
-        "precision": 0.25,
+        "precision": 0.1,
         "recall": 0.6667,
-        "f1": 0.3636,
+        "f1": 0.1739,
         "support": 3,
         "tp": 2,
-        "fp": 6,
+        "fp": 18,
         "fn": 1
       },
       {
         "risk_type": "spill_or_obstruction",
-        "precision": 0.3333,
+        "precision": 0.2667,
         "recall": 1.0,
-        "f1": 0.5,
+        "f1": 0.4211,
         "support": 4,
         "tp": 4,
-        "fp": 8,
+        "fp": 11,
         "fn": 0
       }
     ],
     "macro": {
-      "precision": 0.3881,
-      "recall": 0.7833,
-      "f1": 0.4794
+      "precision": 0.1916,
+      "recall": 0.8133,
+      "f1": 0.3066
     },
     "micro": {
-      "precision": 0.3611,
-      "recall": 0.7647,
-      "f1": 0.4906
+      "precision": 0.1842,
+      "recall": 0.7778,
+      "f1": 0.2979
     },
     "totals": {
-      "tp": 13,
-      "fp": 23,
+      "tp": 14,
+      "fp": 62,
       "fn": 4
     },
-    "false_positive_samples": 16,
+    "false_positive_samples": 34,
     "missed_samples": 4,
-    "false_positive_rate": 0.3721,
+    "false_positive_rate": 0.7907,
     "miss_rate": 0.093,
     "abstain_samples": 0,
     "abstain_rate": 0.0,
@@ -108,7 +108,7 @@
       "total_tool_calls": 0
     }
   },
-  "多 Agent + 工具调用": {
+  "多 Agent": {
     "sample_count": 43,
     "predicted_samples": 43,
     "failed_samples": 0,
@@ -117,12 +117,12 @@
     "per_class": [
       {
         "risk_type": "flammable_near_heat",
-        "precision": 0.75,
+        "precision": 0.6,
         "recall": 1.0,
-        "f1": 0.8571,
+        "f1": 0.75,
         "support": 3,
         "tp": 3,
-        "fp": 1,
+        "fp": 2,
         "fn": 0
       },
       {
@@ -140,19 +140,19 @@
         "precision": 0.0,
         "recall": 0.0,
         "f1": 0.0,
-        "support": 4,
+        "support": 5,
         "tp": 0,
         "fp": 0,
-        "fn": 4
+        "fn": 5
       },
       {
         "risk_type": "reagent_management",
-        "precision": 0.5,
+        "precision": 0.3333,
         "recall": 0.3333,
-        "f1": 0.4,
+        "f1": 0.3333,
         "support": 3,
         "tp": 1,
-        "fp": 1,
+        "fp": 2,
         "fn": 2
       },
       {
@@ -167,24 +167,24 @@
       }
     ],
     "macro": {
-      "precision": 0.5333,
+      "precision": 0.47,
       "recall": 0.55,
-      "f1": 0.5348
+      "f1": 0.5
     },
     "micro": {
-      "precision": 0.6923,
-      "recall": 0.5294,
-      "f1": 0.6
+      "precision": 0.6,
+      "recall": 0.5,
+      "f1": 0.5455
     },
     "totals": {
       "tp": 9,
-      "fp": 4,
-      "fn": 8
+      "fp": 6,
+      "fn": 9
     },
-    "false_positive_samples": 4,
-    "missed_samples": 8,
-    "false_positive_rate": 0.093,
-    "miss_rate": 0.186,
+    "false_positive_samples": 6,
+    "missed_samples": 9,
+    "false_positive_rate": 0.1395,
+    "miss_rate": 0.2093,
     "abstain_samples": 2,
     "abstain_rate": 0.0465,
     "confusions": [
@@ -209,7 +209,7 @@
       "total_tool_calls": 43
     }
   },
-  "两轮自进化后": {
+  "两轮自进化": {
     "sample_count": 43,
     "predicted_samples": 43,
     "failed_samples": 0,
@@ -218,12 +218,12 @@
     "per_class": [
       {
         "risk_type": "flammable_near_heat",
-        "precision": 0.75,
+        "precision": 0.3333,
         "recall": 1.0,
-        "f1": 0.8571,
+        "f1": 0.5,
         "support": 3,
         "tp": 3,
-        "fp": 1,
+        "fp": 6,
         "fn": 0
       },
       {
@@ -238,22 +238,22 @@
       },
       {
         "risk_type": "ppe_missing",
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "support": 4,
-        "tp": 0,
-        "fp": 0,
+        "precision": 0.5,
+        "recall": 0.2,
+        "f1": 0.2857,
+        "support": 5,
+        "tp": 1,
+        "fp": 1,
         "fn": 4
       },
       {
         "risk_type": "reagent_management",
-        "precision": 0.3333,
+        "precision": 0.1429,
         "recall": 0.3333,
-        "f1": 0.3333,
+        "f1": 0.2,
         "support": 3,
         "tp": 1,
-        "fp": 2,
+        "fp": 6,
         "fn": 2
       },
       {
@@ -268,26 +268,26 @@
       }
     ],
     "macro": {
-      "precision": 0.3867,
-      "recall": 0.5167,
-      "f1": 0.4381
+      "precision": 0.3652,
+      "recall": 0.5567,
+      "f1": 0.3971
     },
     "micro": {
-      "precision": 0.5,
-      "recall": 0.4706,
-      "f1": 0.4848
+      "precision": 0.3333,
+      "recall": 0.5,
+      "f1": 0.4
     },
     "totals": {
-      "tp": 8,
-      "fp": 8,
+      "tp": 9,
+      "fp": 18,
       "fn": 9
     },
-    "false_positive_samples": 8,
+    "false_positive_samples": 18,
     "missed_samples": 9,
-    "false_positive_rate": 0.186,
+    "false_positive_rate": 0.4186,
     "miss_rate": 0.2093,
-    "abstain_samples": 1,
-    "abstain_rate": 0.0233,
+    "abstain_samples": 2,
+    "abstain_rate": 0.0465,
     "confusions": [
       {
         "pair": "ppe_missing -> flammable_near_heat",

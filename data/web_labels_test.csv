@@ -21,7 +21,7 @@ web_8442029,data/web_raw/8442029.jpg,test,normal,normal,移液器与离心管，
 web_8531365,data/web_raw/8531365.jpg,test,normal,normal,实验员在白大褂状态下于台前记录数据,全画面,来源=pexels；https://www.pexels.com/photo/8531365/
 web_8533087,data/web_raw/8533087.jpg,test,normal,normal,盛有彩色液体的锥形瓶陈列于架，容器就位,全画面,来源=pexels；https://www.pexels.com/photo/8533087/
 web_8851081,data/web_raw/8851081.jpg,test,normal,normal,试管架与彩色试剂陈列，容器封口,全画面,来源=pexels；https://www.pexels.com/photo/8851081/
-web_8851786,data/web_raw/8851786.jpg,test,normal,normal,实验员佩戴护目镜与手套操作，防护到位,全画面,来源=pexels；https://www.pexels.com/photo/8851786/
+web_8851786,data/web_raw/8851786.jpg,test,ppe_missing,medium,两名人员穿白大褂、戴深色手套做滴定操作，但均未佩戴护目镜（左侧人员戴的是普通黑框眼镜，不构成实验眼部防护）,全画面,来源=pexels；https://www.pexels.com/photo/8851786/；2026-10-25 复核修正：原标注 normal 且证据写「佩戴护目镜」，放大核对后确认为普通眼镜/未佩戴，改判为 ppe_missing
 web_9243372,data/web_raw/9243372.jpg,test,normal,normal,护目镜与手套齐全的显微镜操作,全画面,来源=pexels；https://www.pexels.com/photo/9243372/
 web_9243559,data/web_raw/9243559.jpg,test,normal,normal,玻璃器皿与橡胶塞，器材存放规范,全画面,来源=pexels；https://www.pexels.com/photo/9243559/
 web_9243751,data/web_raw/9243751.jpg,test,normal,normal,两人共同观察显微镜，均佩戴手套,全画面,来源=pexels；https://www.pexels.com/photo/9243751/

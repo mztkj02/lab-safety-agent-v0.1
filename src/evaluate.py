@@ -29,12 +29,29 @@ ABSTAIN_STATUSES = {"uncertain"}
 # ------------------------------------------------------------------ 数据读取
 
 
+def normalize_sample_id(raw: str) -> str:
+    """把标注里的 sample_id 与报告里的 sample_id 归一到同一形式。
+
+    背景：`scripts/build_web_dataset.py` 曾给 Pexels 样本加 `web_` 前缀
+    （如 `web_8851786`），而流水线用 `input_path.stem` 作 sample_id，
+    报告里是没有前缀的 `8851786`。两边对不上时，评测会把该样本当成
+    「没有预测」——真值是 normal 就白算一次正确，真值是风险就白算一次漏报，
+    指标整体失真（实测有 18/43 张受影响）。
+
+    这里统一去掉 `web_` 前缀。只动 ID，不动划分，也不重跑模型。
+    """
+    sid = (raw or "").strip()
+    if sid.startswith("web_"):
+        return sid[len("web_"):]
+    return sid
+
+
 def load_labels(labels_path: Path) -> Dict[str, Set[str]]:
     """读取标注 CSV。同一 sample_id 出现多行即视为多标签样本。"""
     labels: Dict[str, Set[str]] = defaultdict(set)
     with labels_path.open("r", encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
-            sample_id = (row.get("sample_id") or "").strip()
+            sample_id = normalize_sample_id(row.get("sample_id") or "")
             risk_type = (row.get("risk_type") or NORMAL).strip() or NORMAL
             if sample_id:
                 labels[sample_id].add(risk_type)
@@ -46,7 +63,9 @@ def load_predictions(reports_dir: Path) -> Dict[str, Dict[str, Set[str]]]:
     predictions: Dict[str, Dict[str, Set[str]]] = {}
     for path in sorted(reports_dir.glob("*_report.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
-        sample_id = data.get("sample_id") or path.stem.replace("_report", "")
+        sample_id = normalize_sample_id(
+            data.get("sample_id") or path.stem.replace("_report", "")
+        )
         positive, abstain = set(), set()
         for finding in data.get("findings", []):
             status = finding.get("status", "")

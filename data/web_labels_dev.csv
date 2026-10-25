@@ -13,12 +13,12 @@ web_12591661,data/web_raw/12591661.jpg,dev,normal,normal,玻璃器皿存放架�
 web_15831822,data/web_raw/15831822.jpg,dev,normal,normal,生物安全柜前全防护操作，柜门高度正常,全画面,来源=pexels；https://www.pexels.com/photo/15831822/
 web_1683345,data/web_raw/1683345.jpg,dev,normal,normal,显微镜设备，无人员操作，环境整洁,全画面,来源=pexels；https://www.pexels.com/photo/1683345/
 web_3735711,data/web_raw/3735711.jpg,dev,normal,normal,穿白大褂的女生在试剂架前整理器材,全画面,来源=pexels；https://www.pexels.com/photo/3735711/
-web_37951908,data/web_raw/37951908.jpg,dev,normal,normal,实验员举烧杯观察液体；眼部为普通眼镜而非护目镜，属边界样本，人工判为正常并记录不确定性,全画面,来源=pexels；https://www.pexels.com/photo/37951908/
+web_37951908,data/web_raw/37951908.jpg,dev,ppe_missing,medium,实验员穿白大褂举锥形瓶观察紫色液体，戴的是普通黑框近视镜而非护目镜，且未戴手套，不满足眼部与手部防护要求,全画面,来源=pexels；https://www.pexels.com/photo/37951908/；2026-10-25 复核修正：原标注为 normal（备注「边界样本，人工判为正常」），与 synth_ppe_missing_01 同类情形判罚不一致，按 ppe_missing 定义统一改为风险样本
 web_38093862,data/web_raw/38093862.jpg,dev,normal,normal,酒精灯正在加热烧杯，但周边没有任何可燃物，属规范操作（容易被误判为热源旁易燃物）,全画面,来源=pexels；易混淆样本；https://www.pexels.com/photo/38093862/
 web_7789650,data/web_raw/7789650.jpg,dev,normal,normal,多副护目镜整齐摆放在台面，无人在工位操作，属器材存放（容易被误判为未佩戴护目镜）,全画面,来源=pexels；易混淆样本；https://www.pexels.com/photo/7789650/
 web_8442649,data/web_raw/8442649.jpg,dev,normal,normal,锥形瓶特写，瓶口敞开但为纯色展示溶液，无加热源,全画面,来源=pexels；https://www.pexels.com/photo/8442649/
 web_8442810,data/web_raw/8442810.jpg,dev,normal,normal,佩戴护目镜与手套的近距离操作,全画面,来源=pexels；https://www.pexels.com/photo/8442810/
-web_8532831,data/web_raw/8532831.jpg,dev,normal,normal,两名实验员穿白大褂佩戴护目镜在台前工作,全画面,来源=pexels；https://www.pexels.com/photo/8532831/
+web_8532831,data/web_raw/8532831.jpg,dev,ppe_missing,medium,两名人员在台前操作，均穿白色防护服但均未佩戴护目镜；桌面上放着一副黄色镜框护目镜未被使用，一人低头观察显微镜、另一人在旁配合,全画面,来源=pexels；https://www.pexels.com/photo/8532831/；2026-10-25 复核修正：原标注 normal 且证据写「佩戴护目镜」，放大核对后实际两人均未佩戴（护目镜搁在桌面），改判为 ppe_missing
 web_8532848,data/web_raw/8532848.jpg,dev,normal,normal,显微镜前操作，佩戴护目镜,全画面,来源=pexels；https://www.pexels.com/photo/8532848/
 web_9153247,data/web_raw/9153247.jpg,dev,normal,normal,酒精灯置于窗台，周围无可燃物，未点燃,全画面,来源=pexels；https://www.pexels.com/photo/9153247/
 web_9243558,data/web_raw/9243558.jpg,dev,normal,normal,护目镜、面罩与手套齐全，于台前操作,全画面,来源=pexels；https://www.pexels.com/photo/9243558/

@@ -27,6 +27,8 @@ reports/uploads/
 reports/frames/
 reports/smoke/
 reports/video_test/
+# 长时序适配实验的产物（4 分钟视频 + 64 张抽帧图，体积大且可复现，不入库）
+reports/long_video_test/
 reports/tools/
 reports/tool_calls.jsonl
 reports/*_report.json
@@ -47,10 +49,11 @@ data/demo_labels_*.csv
 data/lab/
 .cache/
 
-# ---- 网络图库素材（Pexels 等）：原始图片不入库 ----
-# 属于第三方素材且体积较大，可用 scripts/fetch_web_images.py 重新采集；
-# 但 manifest.json 必须入库 —— 它记录了每张图的 photo_id、来源页与授权说明，
-# 是报告「数据来源」一节唯一的凭据。
+# ---- 网络图库素材（Pexels 等）----
+# 规则：**数据集实际用到的 35 张真实照片已强制入库**（git add -f），
+# 这样别人 clone 下来就能直接跑实验，不需要重新采集。
+# 其余未入选的候选图（73 张）不入库，需要时用 scripts/fetch_web_images.py 重采。
+# 注意：被这条规则命中的文件，若要用必须 git add -f 显式加入。
 data/web_raw/*.jpg
 !data/web_raw/manifest.json
 
@@ -76,3 +79,6 @@ reports/experiments/
 # ---- 例外：保留仓库自带的示例报告 ----
 !reports/ppe_example_report.json
 !reports/ppe_example_report.md
+
+# 标注修正时生成的备份（fix_labels.py 产生，可随时从 CSV 重新导出）
+data/*.csv.bak
